@@ -1,5 +1,5 @@
 #!/bin/bash
-# coded by ....
+# coded by @Tadjmen
 # C - version 1.0
 # CLLF - Collect Linux Logs Forensic
 
@@ -47,7 +47,7 @@ BANNER(){
 \t\t ╚═════╝╚══════╝╚══════╝╚═╝     
 \t\t   
 ${NORMAL}"
-    echo -e "[${YELLOW}CLLF${NORMAL}] == A Collecter Collect Linux Logs Forensic by (${BK}XxxxX${NORMAL})"
+    echo -e "[${YELLOW}CLLF${NORMAL}] == A Collecter Collect Linux Logs Forensic by (${BK}@Tadjmen${NORMAL})"
 }
 
 
@@ -55,7 +55,7 @@ ${NORMAL}"
 #> PRINT USAGE
 PRINTUSAGE(){
     echo -e ""
-    echo -e "[${BOLD}CLLF${NORMAL}] - Release by ${BOLD}XuanMike${NORMAL} with ${RED}<3${NORMAL}\n"
+    echo -e "[${BOLD}CLLF${NORMAL}] - Release by ${BOLD}@Tadjmen${NORMAL} with ${RED}<3${NORMAL}\n"
     echo -e "Syntax Usage:"
     echo -e "./CLLF.sh [-l log.op] [-o output destination]"
     echo -e ""
