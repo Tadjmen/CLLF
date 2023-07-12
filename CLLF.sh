@@ -1,5 +1,5 @@
 #!/bin/bash
-# coded by @Tadjmen
+# coded by XuanMike
 # C - version 1.0
 # CLLF - Collect Linux Logs Forensic
 
@@ -39,15 +39,16 @@ BANNER(){
     clear
     echo -e ""
     echo -e "${YELLOW}
-\t\t ██████╗██╗     ██╗     ███████╗
-\t\t██╔════╝██║     ██║     ██╔════╝
-\t\t██║     ██║     ██║     █████╗  
-\t\t██║     ██║     ██║     ██╔══╝  
-\t\t╚██████╗███████╗███████╗██║     
-\t\t ╚═════╝╚══════╝╚══════╝╚═╝     
-\t\t   
+
+                ░█████╗░██╗░░░░░██╗░░░░░███████╗
+                ██╔══██╗██║░░░░░██║░░░░░██╔════╝
+                ██║░░╚═╝██║░░░░░██║░░░░░█████╗░░
+                ██║░░██╗██║░░░░░██║░░░░░██╔══╝░░
+                ╚█████╔╝███████╗███████╗██║░░░░░
+                ░╚════╝░╚══════╝╚══════╝╚═╝░░░░░
+
 ${NORMAL}"
-    echo -e "[${YELLOW}CLLF${NORMAL}] == A Collecter Collect Linux Logs Forensic by (${BK}@Tadjmen${NORMAL})"
+    echo -e "[${YELLOW}CLLF${NORMAL}] == A Collecter Collect Linux Logs Forensic by (${BK}XuanMike${NORMAL})"
 }
 
 
@@ -55,7 +56,7 @@ ${NORMAL}"
 #> PRINT USAGE
 PRINTUSAGE(){
     echo -e ""
-    echo -e "[${BOLD}CLLF${NORMAL}] - Release by ${BOLD}@Tadjmen${NORMAL} with ${RED}<3${NORMAL}\n"
+    echo -e "[${BOLD}CLLF${NORMAL}] - Release by ${BOLD}XuanMike${NORMAL} with ${RED}<3${NORMAL}\n"
     echo -e "Syntax Usage:"
     echo -e "./CLLF.sh [-l log.op] [-o output destination]"
     echo -e ""
@@ -70,7 +71,7 @@ PRINTUSAGE(){
 	echo -e "   -o, --OUTDIR						Write to output folder                  -o \"10.0.1.134\""
     #echo -e "   -s, --silent                            Hide output in the terminal             ${GREEN}Default: ${RED}False${NORMAL}"
 	echo -e "Example Usage:"
-    echo -e "${BK}./CLLF.sh -l full -o Server1${NORMAL}"
+    echo -e "${BK}./CLLF.sh -l full -o 10.0.1.134${NORMAL}"
     exit 0
 }
 
@@ -105,6 +106,7 @@ while [ -n "$1" ]; do
     esac
     shift
 done
+
 
 
 #> INITIAL CONFIGS
@@ -154,8 +156,15 @@ GET_SYSTEM_INFO(){
 	sudo -V "Sudo_Ver.txt" 2>> ../err
 	echo "      Collecting mount..."
 	mount > mount.txt 2>> ../err
-	echo "      Collecting metadata-accesstimes..."
-	ls -a -F -i -m -R -l -u -t / > metadata-accesstimes.csv 2>> ../err
+	
+
+	if which stat &>/dev/null; then
+		echo "      Collecting ALL metadata system Time - Just wait..."
+		echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -exec stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" {} \; >> metadata-ALLtimes.csv 2>> ../err
+	else 
+		echo "      Collecting metadata-accesstimes..."
+		find / -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv 2>> ../err
+	fi
 
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SYSTEM_INFO are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
