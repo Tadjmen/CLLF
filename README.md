@@ -22,12 +22,12 @@ Syntax Usage:
 ./CLLF.sh [-l log.op] [-o output destination]
 
 Flags:
-   -l, --log                                            Logs collect options                    -l full
+   -l, --log                            Logs collect options               -l full
           "full" is Full folder /var/log (Maybe so big...)
           "lite" is Common Linux log files names and usage
 
 Optional Flags:
-   -o, --OUTDIR                                         Write to output folder                  -o "10.0.1.134"
+   -o, --OUTDIR                         Write to output folder             -o "10.0.1.134"
 Example Usage:
 ./CLLF.sh -l full -o 10.0.1.134
 
