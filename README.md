@@ -41,7 +41,7 @@ OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
 ## Fix errors while using CLLF
 
 ```bash
-XM:~ chmod +x CLLF.sh && ./CLLF.sh -l full -o 192.168.13.27
+XM:~ chmod +x CLLF.sh && ./CLLF.sh
 Error: ./CLLF.sh : /bin/bash^M : bad interpretor: No such file or directory
                                                     
 # fix
