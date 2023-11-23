@@ -19,20 +19,24 @@
 [CLLF] == A Collecter Collect Linux Logs Forensic by (XM)
 
 Syntax Usage:
-./CLLF.sh [-l log.op] [-o output destination]
+./CLLF.sh [-h] [Just run with root]
 
-Flags:
-   -l, --log                            Logs collect options               -l full
-          "full" is Full folder /var/log (Maybe so big...)
-          "lite" is Common Linux log files names and usage
-
-Optional Flags:
-   -o, --OUTDIR                         Write to output folder             -o "10.0.1.134"
 Example Usage:
-./CLLF.sh -l full -o 10.0.1.134
-
+./CLLF.sh
 
 ```
+
+## Edit Config File at CLLF.config
+~~~
+get_metadatatime=true
+get_config=false
+get_logs=true
+get_hidden_home_file=true
+get_disk=false
+verify_package=false
+VR="v1.1"
+OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
+~~~
 
 ## Fix errors while using CLLF
 
