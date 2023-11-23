@@ -1,7 +1,10 @@
 #!/bin/bash
-# coded by XuanMike
-# C - version 1.0
+# coded by XuanMike - XM1945
+# C - version 1.1
 # CLLF - Collect Linux Logs Forensic
+
+sed -i 's/ = /=/' CLLF.config
+source CLLF.config
 
 
 #@> COLORS
@@ -13,17 +16,10 @@ GREEN="\e[32m"
 
 
 #@> Check root privileges
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Please run as root"
   exit
 fi
-
-
-#@> VARIABLES
-log=
-outdir=
-time=
-VR=" v1.0"
 
 
 #@> EXIT FUNCTION
@@ -48,7 +44,7 @@ BANNER(){
                 ░╚════╝░╚══════╝╚══════╝╚═╝░░░░░
 
 ${NORMAL}"
-    echo -e "[${YELLOW}CLLF${NORMAL}] == A Collecter Collect Linux Logs Forensic by (${BK}XuanMike${NORMAL})"
+    echo -e "[${YELLOW}CLLF${NORMAL}] == A Collecter Collect Linux Logs Forensic by (${BK}XM${NORMAL})"
 }
 
 
@@ -56,19 +52,17 @@ ${NORMAL}"
 #> PRINT USAGE
 PRINTUSAGE(){
     echo -e ""
-    echo -e "[${BOLD}CLLF${NORMAL}] - Release by ${BOLD}XuanMike${NORMAL} with ${RED}<3${NORMAL}\n"
+    echo -e "[${BOLD}CLLF${NORMAL}] - Release by ${BOLD}XM${NORMAL} with ${RED}<3${NORMAL}\n"
     echo -e "Syntax Usage:"
-    echo -e "./CLLF.sh [-l log.op] [-o output destination]"
+    echo -e "./CLLF.sh [-l log.op] [Just run with root]"
     echo -e ""
-    echo -e "Flags:"
-	echo -e "   -l, --log						Logs collect options                    -l full"
-	echo -e "          \"${GREEN}full${NORMAL}\" is Full folder /var/log (Maybe so big...)"
-	echo -e "          \"${GREEN}lite${NORMAL}\" is Common Linux log files names and usage"
-    #echo -e "   -t, --time                	      Time to delay                       	 -t 10"
-    #echo -e "   -x, --exclude                    Exclude out of scope domains           -x /home/oosd.txt"
-    echo -e ""
-    echo -e "Optional Flags:"
-	echo -e "   -o, --OUTDIR						Write to output folder                  -o \"10.0.1.134\""
+    #echo -e "Flags:"
+	#echo -e "   -l, --log						Logs collect options                    -l full"
+	#echo -e "          \"${GREEN}full${NORMAL}\" is Full folder /var/log (Maybe so big...)"
+	#echo -e "          \"${GREEN}lite${NORMAL}\" is Common Linux log files names and usage"
+    #echo -e ""
+    #echo -e "Optional Flags:"
+	#echo -e "   -o, --OUTDIR						Write to output folder                  -o \"10.0.1.134\""
     #echo -e "   -s, --silent                            Hide output in the terminal             ${GREEN}Default: ${RED}False${NORMAL}"
 	echo -e "Example Usage:"
     echo -e "${BK}./CLLF.sh -l full -o 10.0.1.134${NORMAL}"
@@ -78,29 +72,9 @@ PRINTUSAGE(){
 #> ARGUMENT FLAGS
 while [ -n "$1" ]; do
     case $1 in
-            -l|--log)
-                log=$2
-                shift ;;
-
-            -o|--OUTDIR)
-                OUTDIR=$2_$(date +%F_%H-%M-%S)
-                shift ;;
-
             -h|--help)
                 PRINTUSAGE
                 shift ;;
-				
-            #-s|--silent)
-            #    silent='true'
-            #    ;;
-			#
-            #-t|--time)
-            #    time=$2
-            #    shift ;;
-			#
-            #-x|--exclude)
-            #    exclude=$2
-            #    shift ;;
             *)
                 PRINTUSAGE
     esac
@@ -108,19 +82,6 @@ while [ -n "$1" ]; do
 done
 
 
-
-#> INITIAL CONFIGS
-if [ -z "$log" ]; then
-        echo -e "\n${RED}ERROR${NORMAL} - Logs collect options not supplied.\n${NORMAL}"
-        PRINTUSAGE
-fi
-
-if [ -z "$OUTDIR" ]; then
-        echo -e "\n${RED}ERROR${NORMAL} - Output destination not supplied.\n${NORMAL}"
-		OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
-		echo -e "\n${RED}ERROR${NORMAL} - Output will set to $OUTDIR.\n${NORMAL}"
-		sleep 5
-fi
 
 mkdir $OUTDIR
 cd $OUTDIR
@@ -157,13 +118,16 @@ GET_SYSTEM_INFO(){
 	echo "      Collecting mount..."
 	mount > mount.txt 2>> ../err
 	
-
-	if which stat &>/dev/null; then
-		echo "      Collecting ALL metadata system Time - Just wait..."
-		echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -exec stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" {} \; >> metadata-ALLtimes.csv 2>> ../err
-	else 
-		echo "      Collecting metadata-accesstimes..."
-		find / -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv 2>> ../err
+	if $get_metadatatime; then
+		if which stat &>/dev/null; then
+			echo "      Collecting ALL metadata system Time - Just wait..."
+			echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -exec sh -c 'if [ $(find "$1" -maxdepth 1 -type f | wc -l) -le 1000 ]; then stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" "$1"; fi' sh {} \; >> metadata-ALLtimes.csv 2>> ../err
+		else 
+			echo "      Collecting metadata-accesstimes..."
+			find / -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv 2>> ../err
+		fi
+	else
+		echo "      NOT Collect metadata-accesstimes..."
 	fi
 
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SYSTEM_INFO are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -207,14 +171,18 @@ GET_PACKAGES(){
 	echo "      Verifying installed package info..."
 	
 	if which dpkg &>/dev/null; then
-		dpkg -V > deb-package-verify.txt
+		if $verify_package; then
+			dpkg -V > deb-package-verify.txt
+		fi
 		echo "      List installed package by APT..."
 		apt list --installed > "apt_list_installed.txt" 2>> ../err
 		echo "      List installed package ..."
 		dpkg -l > "dpkg_l.txt" 2>> ../err
 		dpkg-query -l > "dpkg_query.txt" 2>> ../err
 	else 
-		rpm -qVa > rpm-package-verify.txt
+		if $verify_package; then
+			rpm -qVa > rpm-package-verify.txt
+		fi
 		echo "      List installed package by yum, dnf..."
 		yum list installed > "yum_list_installed.txt" 2>> ../err
 		dnf list installed > "dnf_list_installed.txt" 2>> ../err
@@ -448,36 +416,26 @@ GET_ETC(){
 
 
 #@> GET LOGS
-GET_LOGS(){
+GET_SYS_LOGS(){
     #
     # @desc   :: This function saves Logs
     #
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " Processing Logs ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
-	mkdir LOGS && cd LOGS
+	mkdir SYS_LOGS && cd SYS_LOGS
 	echo "      Collecting popular services Logs..."
 	last -Faixw > "last.txt" 2>> ../err
 	journalctl -x > "journalctl_x.txt" 2>> ../err
 	journalctl -k > "journalctl_k.txt" 2>> ../err
 	cat /var/log/**audit** 2>> ../err | more > "auditd.txt" 2>> ../err
-	cat /var/log/apache*/**access* 2>> ../err | more > "apache_access.txt" 2>> ../err
-	cat /var/log/apache*/**error* 2>> ../err | more > "apache_error.txt" 2>> ../err
 	cat /var/log/boot** 2>> ../err | more > "boot.txt" 2>> ../err
 	utmpdump /var/log/btmp** 2>> ../err | more > "btmp.txt" 2>> ../err
 	utmpdump /var/log/wtmp** 2>> ../err | more > "wtmp.txt" 2>> ../err
-	cat /var/log/httpd/**access* 2>> ../err | more > "httpd_access.txt" 2>> ../err
-	cat /var/log/httpd/**error* 2>> ../err | more > "httpd_error.txt" 2>> ../err
-	cat /var/log/lighttpd/** 2>> ../err | more > "lighttpd.txt" 2>> ../err
 	cat /var/log/apt/** 2>> ../err | more > "apt.txt" 2>> ../err
 	cat /var/log/kern** 2>> ../err | more > "kern.txt" 2>> ../err
 	cat /var/log/mail** 2>> ../err | more > "mail.txt" 2>> ../err
-	cat /var/log/mariadb/** 2>> ../err | more > "mariadb.txt" 2>> ../err
 	cat /var/log/message** 2>> ../err | more > "message.txt" 2>> ../err
-	cat /var/log/mysql*/** 2>> ../err | more > "mysql.txt" 2>> ../err
-	cat /var/log/nginx/**access* 2>> ../err | more > "nginx_access.txt" 2>> ../err
-	cat /var/log/nginx/**error* 2>> ../err | more > "nginx_error.txt" 2>> ../err
 	cat /var/log/secure** 2>> ../err | more > "secure.txt" 2>> ../err
 	cat /var/log/**auth** 2>> ../err | more > "auditd.txt" 2>> ../err
-	cat /var/log/squid/**access* 2>> ../err | more > "squid_proxy.txt" 2>> ../err
 	cat /var/log/syslog** 2>> ../err | more > "syslog.txt" 2>> ../err
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
@@ -563,7 +521,7 @@ CLEAN_UP(){ #Production
 	cd ..
 	echo " "
 	echo -e " Creating $OUTDIR.tar.gz "
-	tar -czf $OUTDIR.tar.gz $OUTDIR
+	tar -czf $OUTDIR.tar.gz $OUTDIR 2>/dev/null
 	
 	# Clean-up $OUTDIR directory if the tar exists
 	if [ -f $OUTDIR.tar.gz ]; then
@@ -576,8 +534,8 @@ CLEAN_UP(){ #Production
 	fi
 	if [ -d $OUTDIR ]; then
 	 echo " "
-	 echo " WARNING Clean-up ERROR!"
-	 echo $OUTDIR
+	 echo " WARNING Clean-up ERROR! "
+	 echo $OUTDIR*
 	fi
 
 }
@@ -591,14 +549,12 @@ SEND_NOTE(){
 }
 
 RUN(){
+	GET_SYSTEM_INFO; sleep 5
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
-	if [ $log == 'lite' ]; then
-		#GET Logs with Logs argument
-		GET_LOGS 
-	elif [ $log == 'full' ]; then
+	if $get_logs; then
 		echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
 		read -p "Choice to continue Y/N:" -n 1 -r varchoice
-		echo    # (optional) move to a new line
+		echo
 		if [[ $varchoice =~ ^[Yy]$ ]]; then
 			GET_FULL_LOGS
 		else
@@ -606,14 +562,20 @@ RUN(){
 			rm -rf $OUTDIR
 			exit 0;
 		fi
-		 
-	else
-		echo -e "\n${RED}ERROR${NORMAL} - Bad Logs argument ...${NORMAL}"
-		exit 0;
+	fi
+
+	if $get_config; then
+		GET_ETC; sleep 5
 	fi
 	
-	GET_SYSTEM_INFO; sleep 5
-	GET_DISK; sleep 5
+	if $get_hidden_home_file; then
+		GET_HIDDEN_HOME_FILE; sleep 5
+	fi
+	
+	if $get_hidden_home_file; then
+		GET_DISK; sleep 5
+	fi
+	
 	GET_PACKAGES; sleep 5
 	GET_ACCOUNT; sleep 5
 	GET_PROCESS; sleep 5
@@ -621,13 +583,13 @@ RUN(){
 	GET_OPENED_PORTS; sleep 5
 	GET_NETWORK_INFO; sleep 5
 	GET_TASKS; sleep 5
-	GET_HIDDEN_HOME_FILE; sleep 5
-	GET_ETC; sleep 5
 	GET_WEBSERVERSCRIPTS; sleep 5
 	GET_SSHKEY; sleep 5
 	GET_HISTORIES; sleep 5
 	GET_SUSPICIOUS; sleep 5
+	GET_SYS_LOGS; sleep 5
 }
+
 
 while true
 do
