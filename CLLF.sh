@@ -104,6 +104,7 @@ GET_SYSTEM_INFO(){
 	cat /proc/cpuinfo > "cpuinfo.txt" 2>> ../err
 	cat /proc/meminfo > "meminfo.txt" 2>> ../err
 	cat /proc/version> "version.txt" 2>> ../err
+ 	ls -lah /var/log/ > "var_log_directory_listing.txt" 2>> ../err
 	printenv > "printenv.txt" 2>> ../err
 	set > "set.txt" 2>> ../err
 	#This saves loaded modules
