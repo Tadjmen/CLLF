@@ -19,7 +19,8 @@
 [CLLF] == A Collecter Collect Linux Logs Forensic by (XM)
 
 Syntax Usage:
-./CLLF.sh [-h] [Just run with root]
+./CLLF.sh [-h] [Just run with root] (For most cases)
+./CLLF_Restricted_SHELL.sh -h  (In case Linux shell restricted)
 
 Example Usage:
 ./CLLF.sh
