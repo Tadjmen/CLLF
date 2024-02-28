@@ -185,8 +185,11 @@ GET_PACKAGES(){
 			rpm -qVa > rpm-package-verify.txt
 		fi
 		echo "      List installed package by yum, dnf..."
-		yum list installed > "yum_list_installed.txt" 2>> ../err
-		dnf list installed > "dnf_list_installed.txt" 2>> ../err
+  		if which yum &>/dev/null; then
+			yum list installed > "yum_list_installed.txt" 2>> ../err
+   		else
+			dnf list installed > "dnf_list_installed.txt" 2>> ../err
+   		fi
 		rpm -qa > "rpm_qa.txt" 2>> ../err
 		rpm -Va > "rpm_Va.txt" 2>> ../err
 	fi
