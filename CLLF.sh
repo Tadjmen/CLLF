@@ -509,10 +509,9 @@ GET_SUSPICIOUS(){
 	echo "      Collecting SUSPICIOUS File ..."
 	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf File-Excute-TMP.tar.gz > "File-Excute-TMP.txt" 2>> ../err
 	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf File-HIDE-TMP.tar.gz > "File-HIDE-TMP.txt" 2>> ../err
+ 	find / -type f -perm /+x -exec sha256sum {} + > hash_results.txt 2>> ../err
 	echo "      Collecting SUID-SGID File ..."
 	find / -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
-	
-	
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
