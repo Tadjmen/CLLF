@@ -215,6 +215,8 @@ GET_ACCOUNT(){
 	cat /etc/group > "etc_group.txt" 2>> ../err
 	cat /etc/shadow > "etc_shadow.txt" 2>> ../err
 	cat /etc/gshadow > "etc_gshadow.txt" 2>> ../err
+	echo "      Collecting list of root account  ..."
+	grep ":0:" /etc/passwd > "root_user.txt" 2>> ../err
 	echo "      Collecting information about users who are currently logged in  ..."
 	who -alpu > "who_alpu.txt" 2>> ../err
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Accounts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -237,8 +239,14 @@ GET_PROCESS(){
 	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt 2>> ../err
 	echo "      Collecting the process symbolic links..."
 	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > Running-process-exe-links.txt 2>> ../err
+ 	echo "      Collecting the process environment..."
+	find /proc/[0-9]*/environ | xargs head 2>/dev/null > Running-process-environ.txt 2>> ../err
+  	echo "      Collecting the process CWD..."
+	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > Running-process-cwd.txt 2>> ../err
 	echo "      Collecting the process cmdline..."
 	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > Running-process-cmdline.txt 2>> ../err
+ 	echo "      Collecting the process comm..."
+	find /proc/[0-9]*/comm | xargs head 2>/dev/null > Running-process-comm.txt 2>> ../err
 	echo "      Collecting Run-time variable data..."
 	ls -latr /var/run 2>/dev/null > TEMP-VAR_RUN.txt 2>> ../err
 	ls -latr /run 2>/dev/null > TEMP-RUN.txt 2>> ../err
@@ -386,21 +394,31 @@ GET_TASKS(){
 	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_User.txt" 2>> ../err
 	(cat /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "systemd.txt" 2>> ../err
 	(cat /etc/rc*.d**/* /etc/rc.local*) > "rc.txt" 2>> ../err
+	echo "      Collecting timers list..."
+   	systemctl list-timers --all > "list-timers.txt" 2>> ../err
+
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: tasks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
 
 
 #@> GET FULL hidden home files
-GET_HIDDEN_HOME_FILE(){
+GET_HIDDEN_FILE_FOLDER(){
     #
     # @desc   :: This function saves scheduled tasks (servicse, cron, rc, .profile ...)
     #
-	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " Processing GET FULL hidden home files ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
-	mkdir HIDDEN_HOME_FILES && cd HIDDEN_HOME_FILES
+	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
+	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
+	echo "      Collecting hidden DIR at /..."
+ 	find / -type d -name ".*"  > hidden-folder.txt 2>> ../err
 	echo "      Collecting hidden home files..."
-	grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 tar -czvf hidden-user-home-dir.tar.gz  > hidden-user-home-dir-list.txt 2>> ../err
-	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET FULL hidden home files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
+	if which timeout &>/dev/null; then
+		timeout 1800s grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
+	else
+		grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 tar -czvf hidden-user-home-dir.tar.gz  > hidden-user-home-dir-list.txt 2>> ../err
+	fi
+
+	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
 
@@ -570,11 +588,11 @@ RUN(){
 		GET_ETC; sleep 5
 	fi
 	
-	if $get_hidden_home_file; then
-		GET_HIDDEN_HOME_FILE; sleep 5
+	if $get_hidden_file_folder; then
+		GET_HIDDEN_FILE_FOLDER; sleep 5
 	fi
 	
-	if $get_hidden_home_file; then
+	if $get_disk; then
 		GET_DISK; sleep 5
 	fi
 
