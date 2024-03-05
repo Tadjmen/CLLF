@@ -28,7 +28,12 @@ Example Usage:
 ```
 
 
-**Syntax Usage CLLF_Restricted_SHELL.sh**:
+```diff
+- I will not update CLLF_Restricted_SHELL.sh more, pls use CLLF.sh or Edit manual you script
+
+```
+
+**Syntax Usage CLLF_Restricted_SHELL.sh**: 	
 ```bash
 ./CLLF_Restricted_SHELL.sh [-l full/lite] [-o output destination]
 ./CLLF_Restricted_SHELL.sh [-h] [Just run with root]
