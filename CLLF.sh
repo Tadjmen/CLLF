@@ -293,11 +293,12 @@ GET_OPENED_PORTS(){
 	ss --all > "ss_all.txt" 2>> ../err
 	ss -lntu > "ss_lntu.txt" 2>> ../err
 	netstat -a > "netstat_a.txt" 2>> ../err
-	netstat -lntu > "netstat_lntu.txt" 2>> ../err
+	netstat -plntu > "netstat_with_PID.txt" 2>> ../err
 	
 	if which lsof &>/dev/null; then
 		echo "      Collecting List open files..."
-		lsof -i -n -P > "lsof.txt" 2>> ../err
+  		lsof > "List_open_files.txt" 2>> ../err
+		lsof -i -n -P > "List_open_files_contain_ipv4.txt" 2>> ../err
 	fi
 	
 	echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: ports are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
