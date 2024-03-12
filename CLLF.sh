@@ -454,6 +454,7 @@ GET_SYS_LOGS(){
 	utmpdump /var/log/btmp** 2>> ../err | more > "btmp.txt" 2>> ../err
 	utmpdump /var/log/wtmp** 2>> ../err | more > "wtmp.txt" 2>> ../err
  	utmpdump /var/log/utmp** 2>> ../err | more > "utmp.txt" 2>> ../err
+  	utmpdump /var/run/utmp 2>> ../err | more > "utmp.txt" 2>> ../err
 	cat /var/log/apt/** 2>> ../err | more > "apt.txt" 2>> ../err
 	cat /var/log/kern** 2>> ../err | more > "kern.txt" 2>> ../err
 	cat /var/log/mail** 2>> ../err | more > "mail.txt" 2>> ../err
