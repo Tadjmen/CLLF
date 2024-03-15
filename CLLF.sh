@@ -581,7 +581,7 @@ RUN(){
 	
  	if $live_rasoat; then
   		mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
-		/bin/bash rasoat.sh; sleep 5
+		/bin/bash ../rasoat.sh; sleep 5
   		cd ..
 	fi
  	
