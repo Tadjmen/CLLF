@@ -77,8 +77,8 @@ FILES_SUSPICIUS(){
 	echo -e "|${BK}		${NORMAL}" | tr -d '\n' | echo -e "| Processing FILES_SUSPICIUS... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	echo -e "+---------------------------------------------------------------------------+"
 	mkdir FILES_SUSPICIUS && cd FILES_SUSPICIUS
-	echo "	  Collecting immutable files and directories..."
-	lsattr / -R 2> /dev/null | grep "\----i" > "immutable_files_and_directories.txt" 2>> ../err
+	#echo "	  Collecting immutable files and directories..."
+	#lsattr / -R 2> /dev/null | grep "\----i" > "immutable_files_and_directories.txt" 2>> ../err
 	#echo "	  Collecting decentralized File and DIR..."
 	#find / \( -nouser -o -nogroup \) -exec ls -lg {} \; > "decentralized_file_dir.txt" 2>> ../err
 	echo "	  Collecting list File ELF in TMP..."
@@ -193,9 +193,9 @@ VIEW_FILES_SUSPICIUS(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " VIEWING.. FILES_SUSPICIUS... ${BK}${NORMAL} "
 	cd FILES_SUSPICIUS
-	echo -e "	  ${YELLOW}Viewing.. immutable files and directories...${NORMAL}"
-	cat "immutable_files_and_directories.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n'
+	#echo -e "	  ${YELLOW}Viewing.. immutable files and directories...${NORMAL}"
+	#cat "immutable_files_and_directories.txt" | more 2>&1
+	#read -rsp $'Press ENTER to continue... \n'
 	#echo -e "	  ${YELLOW}Viewing.. decentralized File and DIR...${NORMAL}"
 	#cat "decentralized_file_dir.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
