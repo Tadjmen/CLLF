@@ -53,14 +53,21 @@ Example Usage:
 
 ## Edit Config File at CLLF.config
 ~~~
-get_metadatatime=true
-get_config=false
-get_logs=true
-get_hidden_home_file=true
-get_disk=false
-verify_package=false
-VR="v1.1"
-OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
+# Config File while using CLLF
+# Just use "true" and "false" for parameter value.
+# 
+#
+#
+#live_rasoat=true                                                                                Live IR
+#get_metadatatime=true                                                                           Get all metadata off file and folder, Like MFT in Windows
+#get_config=false                                                                                Just copy Full /ETC folder ;D
+#get_logs=true                                                                                   Just copy Full /var/log folder ;D
+#get_hidden_file_folder=true                                                                     Copy all File in Hidden Folder at HOME
+#get_disk=false                                                                                  Disk INFO
+#verify_package=false                                                                            dpkg -V
+#VR="v1.1"                                                                                       ...
+#OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)                  OUTDIR
+################################################
 ~~~
 
 ## Fix errors while using CLLF
