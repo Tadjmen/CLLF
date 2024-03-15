@@ -580,7 +580,9 @@ SEND_NOTE(){
 RUN(){
 	
  	if $live_rasoat; then
+  		mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
 		/bin/bash rasoat.sh; sleep 5
+  		cd ..
 	fi
  	
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
