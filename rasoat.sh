@@ -232,10 +232,13 @@ VIEW_USER_SUSPICIUS(){
 	cd USER_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. list root user ...${NORMAL}"
 	cat "list_root_user.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Sudoers permission ...${NORMAL}"
 	cat "sudoers.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. List user Loginable ...${NORMAL}"
 	cat "list_user_loginable.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
@@ -253,8 +256,10 @@ VIEW_PERSISTENT_SUSPICIOUS(){
 	cd PERSISTENT_SUSPICIOUS
 	echo -e "	  ${YELLOW}Viewing.. Crontab per user ...${NORMAL}"
 	cat "cron_per_user.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list-timers ...${NORMAL}"
 	cat "list-timers.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
