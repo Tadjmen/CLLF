@@ -578,6 +578,11 @@ SEND_NOTE(){
 }
 
 RUN(){
+	
+ 	if $live_rasoat; then
+		/bin/bash rasoat.sh; sleep 5
+	fi
+ 	
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
 	if $get_logs; then
 		echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
