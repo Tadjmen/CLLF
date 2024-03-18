@@ -117,7 +117,7 @@ USER_SUSPICIUS(){
 	echo "	  Collecting Sudoers permission ..."
 	cat /etc/sudoers > "sudoers.txt" 2>> ../err
 	echo "	  Collecting List user Loginable ..."
-	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -vE '(nologin|halt|false|shutdown|sync)' | sort "list_user_loginable.txt" 2>> ../err
+	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -vE '(nologin|halt|false|shutdown|sync)' | sort > "list_user_loginable.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
