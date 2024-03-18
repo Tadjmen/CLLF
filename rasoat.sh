@@ -9,6 +9,11 @@ RED="\e[31m"
 YELLOW="\e[93m"
 GREEN="\e[32m"
 
+#@> Check root privileges
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Please run as root"
+  exit
+fi
 
 #@> Print BANNER
 BANNER(){
