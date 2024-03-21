@@ -58,15 +58,15 @@ Example Usage:
 # 
 #
 #
-#live_rasoat=true                                                                                Live IR
-#get_metadatatime=true                                                                           Get all metadata off file and folder, Like MFT in Windows
-#get_config=false                                                                                Just copy Full /ETC folder ;D
-#get_logs=true                                                                                   Just copy Full /var/log folder ;D
-#get_hidden_file_folder=true                                                                     Copy all File in Hidden Folder at HOME
-#get_disk=false                                                                                  Disk INFO
-#verify_package=false                                                                            dpkg -V
-#VR="v1.1"                                                                                       ...
-#OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)                  OUTDIR
+#live_rasoat=true                                                                     Live IR
+#get_metadatatime=true                                                                Get all metadata off file and folder, Like MFT in Windows
+#get_config=false                                                                     Just copy Full /ETC folder ;D
+#get_logs=true                                                                        Just copy Full /var/log folder ;D
+#get_hidden_file_folder=true                                                          Copy all File in Hidden Folder at HOME
+#get_disk=false                                                                       Disk INFO
+#verify_package=false                                                                 dpkg -V
+#VR="v1.1"                                                                            ...
+#OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)       OUTDIR
 ################################################
 ~~~
 
