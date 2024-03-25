@@ -572,32 +572,37 @@ SEND_NOTE(){
     echo -e "${GREEN}[CLLF] - Scanning completed at $(date)${NORMAL}" 
 	echo -e "\n\n"
 	echo -e "+---------------------------------------------------------------------------+"
-	echo -e "|      2024 - VNPT Cyber Immunity | Threat Hunting and Incident Response    |"
+	echo -e "|      2024 - ____ _____ ________ | Threat Hunting and Incident Response    |"
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "\n\n"
 }
 
 RUN(){
-	
- 	if $live_rasoat; then
-  		mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
-		/bin/bash ../../rasoat.sh; sleep 5
-  		cd ..
-	fi
- 	
+
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
 	if $get_logs; then
 		echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
 		read -p "Choice to continue Y/N:" -n 1 -r varchoice
 		echo
 		if [[ $varchoice =~ ^[Yy]$ ]]; then
-			GET_FULL_LOGS
+			get_logs_confirm=true
 		else
 			cd ..
 			rm -rf $OUTDIR
 			exit 0;
 		fi
 	fi
+
+ 	if $live_rasoat; then
+  		mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
+		/bin/bash ../../rasoat.sh; sleep 5
+  		cd ..
+	fi
+ 	
+	if $get_logs_confirm; then
+		GET_FULL_LOGS
+	fi
+
 
 	if $get_config; then
 		GET_ETC; sleep 5
