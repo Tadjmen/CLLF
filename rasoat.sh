@@ -142,7 +142,7 @@ PERSISTENT_SUSPICIOUS(){
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "|===================== ${GREEN}Done!, Collecting successfully${NORMAL} ======================|"
 	echo -e "+---------------------------------------------------------------------------+"
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 
 }
 
@@ -157,13 +157,13 @@ VIEW_NETWORK_SUSPICIUS(){
 	cd NETWORK_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. LSOF with IP ...${NORMAL}"
 	cat "List_open_files_contain_ipv4.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. netstat with PID ...${NORMAL}"
 	cat "netstat_with_PID.txt" | more 2>&1
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
- 	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+ 	read -rsp $'Press ENTER to continue... \n'
 	cd ..
 }
 
@@ -177,16 +177,16 @@ VIEW_PROCESS_SUSPICIUS(){
 	cd PROCESS_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. deleted still running ...${NORMAL}"
 	cat "Process_deleted_but_running.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Real Process running path ...${NORMAL}"
 	cat "Real_process_running_path.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Process running with suspicious CWD ...${NORMAL}"
 	cat "Process_running_with_suspicious_CWD.txt" | more 2>&1
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
- 	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+ 	read -rsp $'Press ENTER to continue... \n'
 	cd ..
 }
 
@@ -203,28 +203,28 @@ VIEW_FILES_SUSPICIUS(){
 	#read -rsp $'Press ENTER to continue... \n'
 	#echo -e "	  ${YELLOW}Viewing.. decentralized File and DIR...${NORMAL}"
 	#cat "decentralized_file_dir.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list File ELF in TMP...${NORMAL}"
 	cat "ELF_file_in_TMP.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list File hide in TMP...${NORMAL}"
 	cat "File_hidden_TMP.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list File hide in TMP (hash)...${NORMAL}"
  	cat "tmp_file_hash_results.txt" | more 2>&1
- 	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+ 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. SUSPICIOUS File ...${NORMAL}"
 	cat "File_Excuteable_TMP.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. file modify last 1 DAY...${NORMAL}"
 	cat "last_1_day_file_modify.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. file ELF in Log...${NORMAL}"
 	cat "elf_in_log.txt" | more 2>&1
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
- 	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+ 	read -rsp $'Press ENTER to continue... \n'
 	cd ..  
 }
 
@@ -237,17 +237,17 @@ VIEW_USER_SUSPICIUS(){
 	cd USER_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. list root user ...${NORMAL}"
 	cat "list_root_user.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Sudoers permission ...${NORMAL}"
 	cat "sudoers.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. List user Loginable ...${NORMAL}"
 	cat "list_user_loginable.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
- 	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+ 	read -rsp $'Press ENTER to continue... \n'
 	cd ..  
 }
 
@@ -261,13 +261,13 @@ VIEW_PERSISTENT_SUSPICIOUS(){
 	cd PERSISTENT_SUSPICIOUS
 	echo -e "	  ${YELLOW}Viewing.. Crontab per user ...${NORMAL}"
 	cat "cron_per_user.txt" | more 2>&1
-	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list-timers ...${NORMAL}"
 	cat "list-timers.txt" | more 2>&1
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
- 	read -rsp $'Press ENTER to continue... \n' ; sleep 1
+ 	read -rsp $'Press ENTER to continue... \n'
 	cd ..  
 }
 
@@ -278,7 +278,7 @@ SEND_NOTE(){
 	echo -e "${GREEN}[CLLF] - Scanning completed at $(date)${NORMAL}" 
 	echo -e "\n\n"
 	echo -e "+---------------------------------------------------------------------------+"
-	echo -e "|    2024 - VNPT Cyber Immunity | Threat Hunting and Incident Response      |"
+	echo -e "|    2024 - ____ _____ ________ | Threat Hunting and Incident Response      |"
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "\n\n"
 }
