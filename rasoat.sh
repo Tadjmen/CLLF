@@ -62,6 +62,8 @@ PROCESS_SUSPICIUS(){
 	echo -e "|${BK}		${NORMAL}" | tr -d '\n' | echo -e "| Processing PROCESS_SUSPICIUS ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	echo -e "+---------------------------------------------------------------------------+"
 	mkdir PROCESS_SUSPICIUS && cd PROCESS_SUSPICIUS
+ 	echo "	  Collecting root process high PID..."
+	ps -xau | awk '$1=="root" && $2 > 1000' > "Root_process_high_PID.txt" 2>> ../err
 	echo "	  Collecting deleted still running ..."
 	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "Process_deleted_but_running.txt" 2>> ../err
 	echo "	  Collecting Real Process running path ..."
@@ -175,6 +177,9 @@ VIEW_PROCESS_SUSPICIUS(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " VIEWING.. PROCESS_SUSPICIUS ... ${BK}${NORMAL} "
 	cd PROCESS_SUSPICIUS
+	echo -e "	  ${YELLOW}Viewing.. root process high PID...${NORMAL}"
+	cat "Root_process_high_PID.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. deleted still running ...${NORMAL}"
 	cat "Process_deleted_but_running.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
