@@ -2,6 +2,8 @@
 # coded by XuanMike - XM1945
 
 
+
+
 #@> COLORS
 BK="\e[7m"
 NORMAL="\e[0m"
