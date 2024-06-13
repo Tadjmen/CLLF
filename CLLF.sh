@@ -591,7 +591,7 @@ RUN(){
 		if auto=true; then
 			echo -e "\n\n"
 			echo -e "+---------------------------------------------------------------------------+"
-			echo -e "|      ${RED}AUTO MODE IS ON${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL} of Log will be Collect..."
+			echo -e "|      ${RED}AUTO MODE IS ON${NORMAL} - Size is ${GREEN}${duvarlog}${NORMAL} of Log will be Collect..."
 			echo -e "+---------------------------------------------------------------------------+"
 			echo -e "\n\n"
 		else
