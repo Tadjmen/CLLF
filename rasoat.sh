@@ -298,7 +298,7 @@ RUN(){
 	USER_SUSPICIUS
 	PERSISTENT_SUSPICIOUS
 
-	if $check_rasoat; then
+	if [[ $check_rasoat == true ]]; then
 		VIEW_NETWORK_SUSPICIUS
 		VIEW_PROCESS_SUSPICIUS
 		VIEW_FILES_SUSPICIUS
