@@ -586,63 +586,63 @@ SEND_NOTE(){
 }
 
 RUN(){
-	duvarlog=$(du -sh /var/log/ 2>/dev/null)
-	if $get_logs; then
-		if auto=true; then
-			echo -e "\n\n"
-			echo -e "+---------------------------------------------------------------------------+"
-			echo -e "|      ${RED}AUTO MODE IS ON${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL} of Log will be Collect..."
-			echo -e "+---------------------------------------------------------------------------+"
-			echo -e "\n\n"
-		else
-			echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
-			read -p "Choice to continue Y/N:" -n 1 -r varchoice
-			echo
-			if [[ $varchoice =~ ^[Yy]$ ]]; then
-				get_logs_confirm=true
-			else
-				cd ..
-				rm -rf $OUTDIR
-				exit 0;
-			fi
-	fi
+    duvarlog=$(du -sh /var/log/ 2>/dev/null)
+    if $get_logs; then
+        if [[ $auto == true ]]; then
+            echo -e "\n\n"
+            echo -e "+---------------------------------------------------------------------------+"
+            echo -e "|      ${RED}AUTO MODE IS ON${NORMAL} - Size is ${GREEN}${duvarlog}${NORMAL} of Log will be Collect..."
+            echo -e "+---------------------------------------------------------------------------+"
+            echo -e "\n\n"
+        else
+            echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
+            read -p "Choice to continue Y/N:" -n 1 -r varchoice
+            echo
+            if [[ $varchoice =~ ^[Yy]$ ]]; then
+                get_logs_confirm=true
+            else
+                cd ..
+                rm -rf $OUTDIR
+                exit 0;
+            fi
+        fi
+    fi
 
- 	if $live_rasoat; then
-  		mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
-		/bin/bash ../../rasoat.sh; sleep 5
-  		cd ..
-	fi
- 	
-	if $get_logs_confirm; then
-		GET_FULL_LOGS
-	fi
+    if $live_rasoat; then
+        mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
+        /bin/bash ../../rasoat.sh; sleep 5
+        cd ..
+    fi
 
+    if $get_logs_confirm; then
+        GET_FULL_LOGS
+    fi
 
-	if $get_config; then
-		GET_ETC; sleep 5
-	fi
-	
-	if $get_hidden_file_folder; then
-		GET_HIDDEN_FILE_FOLDER; sleep 5
-	fi
-	
-	if $get_disk; then
-		GET_DISK; sleep 5
-	fi
+    if $get_config; then
+        GET_ETC; sleep 5
+    fi
 
- 	GET_SYSTEM_INFO; sleep 5
-	GET_PACKAGES; sleep 5
-	GET_ACCOUNT; sleep 5
-	GET_PROCESS; sleep 5
-	GET_SERVICES; sleep 5
-	GET_OPENED_PORTS; sleep 5
-	GET_NETWORK_INFO; sleep 5
-	GET_TASKS; sleep 5
-	GET_WEBSERVERSCRIPTS; sleep 5
-	GET_SSHKEY; sleep 5
-	GET_HISTORIES; sleep 5
-	GET_SUSPICIOUS; sleep 5
-	GET_SYS_LOGS; sleep 5
+    if $get_hidden_file_folder; then
+        GET_HIDDEN_FILE_FOLDER; sleep 5
+    fi
+
+    if $get_disk; then
+        GET_DISK; sleep 5
+    fi
+
+    GET_SYSTEM_INFO; sleep 5
+    GET_PACKAGES; sleep 5
+    GET_ACCOUNT; sleep 5
+    GET_PROCESS; sleep 5
+    GET_SERVICES; sleep 5
+    GET_OPENED_PORTS; sleep 5
+    GET_NETWORK_INFO; sleep 5
+    GET_TASKS; sleep 5
+    GET_WEBSERVERSCRIPTS; sleep 5
+    GET_SSHKEY; sleep 5
+    GET_HISTORIES; sleep 5
+    GET_SUSPICIOUS; sleep 5
+    GET_SYS_LOGS; sleep 5
 }
 
 
