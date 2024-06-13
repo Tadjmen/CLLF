@@ -32,7 +32,7 @@ ${NORMAL}"
 }
 
 
-OUTDIR=Logs_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
+OUTDIR=Logs_LIVEHUNT_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
 mkdir $OUTDIR && cd $OUTDIR
 touch err
 
@@ -146,7 +146,6 @@ PERSISTENT_SUSPICIOUS(){
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "|===================== ${GREEN}Done!, Collecting successfully${NORMAL} ======================|"
 	echo -e "+---------------------------------------------------------------------------+"
-	read -rsp $'Press ENTER to continue... \n'
 
 }
 
@@ -157,6 +156,7 @@ VIEW_NETWORK_SUSPICIUS(){
 	#
 	# @desc   :: This function saves NETWORK_SUSPICIUS
 	#
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " VIEWING.. NETWORK_SUSPICIUS... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	cd NETWORK_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. LSOF with IP ...${NORMAL}"

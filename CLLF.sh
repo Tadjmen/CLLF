@@ -554,7 +554,7 @@ CLEAN_UP(){ #Production
 	cd ..
 	echo " "
 	echo -e " Creating $OUTDIR.tar.gz "
-	tar -czf $OUTDIR.tar.gz $OUTDIR 2>/dev/null
+	tar -czf $OUTDIR.tar.gz -C "$OUTDIR" . 2>/dev/null
 	
 	# Clean-up $OUTDIR directory if the tar exists
 	if [ -f $OUTDIR.tar.gz ]; then
@@ -610,10 +610,15 @@ RUN(){
     fi
 
     if $live_rasoat; then
-        mkdir LIVE_IR_rasoatsh && cd LIVE_IR_rasoatsh
-        /bin/bash ../../rasoat.sh; sleep 5
+        /bin/bash "$BASEDIR/rasoat.sh"; sleep 5
         cd ..
     fi
+
+
+SCRIPT=$(readlink -f "$0")
+BASEDIR="$(dirname "$SCRIPT")"
+cd $BASEDIR
+
 
     if $get_logs_confirm; then
         GET_FULL_LOGS
