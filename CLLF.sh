@@ -72,6 +72,9 @@ PRINTUSAGE(){
 #> ARGUMENT FLAGS
 while [ -n "$1" ]; do
     case $1 in
+			-o|--OUTDIR)
+                OUTDIR=$2
+                shift ;;
             -h|--help)
                 PRINTUSAGE
                 shift ;;
