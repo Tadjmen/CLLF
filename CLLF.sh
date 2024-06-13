@@ -3,9 +3,12 @@
 # C - version 1.1
 # CLLF - Collect Linux Logs Forensic
 
+SCRIPT=$(readlink -f "$0")
+BASEDIR="$(dirname "$SCRIPT")"
+cd $BASEDIR
+
 sed -i 's/ = /=/' CLLF.config
 source CLLF.config
-
 
 #@> COLORS
 BK="\e[7m"
@@ -75,6 +78,9 @@ while [ -n "$1" ]; do
 			-o|--OUTDIR)
                 OUTDIR=$2
                 shift ;;
+			-a|--auto)
+                auto=true
+                shift ;;
             -h|--help)
                 PRINTUSAGE
                 shift ;;
@@ -83,7 +89,6 @@ while [ -n "$1" ]; do
     esac
     shift
 done
-
 
 
 mkdir $OUTDIR
@@ -581,19 +586,25 @@ SEND_NOTE(){
 }
 
 RUN(){
-
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
 	if $get_logs; then
-		echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
-		read -p "Choice to continue Y/N:" -n 1 -r varchoice
-		echo
-		if [[ $varchoice =~ ^[Yy]$ ]]; then
-			get_logs_confirm=true
+		if auto=true; then
+			echo -e "\n\n"
+			echo -e "+---------------------------------------------------------------------------+"
+			echo -e "|      ${RED}AUTO MODE IS ON${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL} of Log will be Collect..."
+			echo -e "+---------------------------------------------------------------------------+"
+			echo -e "\n\n"
 		else
-			cd ..
-			rm -rf $OUTDIR
-			exit 0;
-		fi
+			echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
+			read -p "Choice to continue Y/N:" -n 1 -r varchoice
+			echo
+			if [[ $varchoice =~ ^[Yy]$ ]]; then
+				get_logs_confirm=true
+			else
+				cd ..
+				rm -rf $OUTDIR
+				exit 0;
+			fi
 	fi
 
  	if $live_rasoat; then
