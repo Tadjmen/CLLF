@@ -614,12 +614,6 @@ RUN(){
         cd ..
     fi
 
-
-SCRIPT=$(readlink -f "$0")
-BASEDIR="$(dirname "$SCRIPT")"
-cd $BASEDIR
-
-
     if $get_logs_confirm; then
         GET_FULL_LOGS
     fi
