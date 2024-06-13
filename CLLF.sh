@@ -80,6 +80,7 @@ while [ -n "$1" ]; do
                 shift ;;
 			-a|--auto)
                 auto=true
+				check_rasoat=false
                 shift ;;
             -h|--help)
                 PRINTUSAGE
