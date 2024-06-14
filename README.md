@@ -58,8 +58,8 @@ Example Usage:
 # 
 #
 #
-#live_rasoat=true                                                                     Live IR
-#check_rasoat=true                                                                    Check results Live IR
+#run_liveIR=true                                                                     Live IR
+#check_liveIR=true                                                                    Check results Live IR
 #get_metadatatime=true                                                                Get all metadata off file and folder, Like MFT in Windows
 #get_config=false                                                                     Just copy Full /ETC folder ;D
 #get_logs=true                                                                        Just copy Full /var/log folder ;D

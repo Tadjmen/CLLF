@@ -80,7 +80,7 @@ while [ -n "$1" ]; do
 				shift ;;
 			-a|--auto)
 				auto=true
-				check_rasoat=false
+				check_liveIR=false
 				shift ;;
 			-h|--help)
 				PRINTUSAGE
@@ -609,8 +609,8 @@ RUN(){
 		fi
 	fi
 
-	if $live_rasoat; then
-		/bin/bash "$BASEDIR/rasoat.sh"; sleep 5
+	if $run_liveIR; then
+		/bin/bash "$BASEDIR/liveIR.sh"; sleep 5
 	fi
 
 	if $get_logs_confirm; then

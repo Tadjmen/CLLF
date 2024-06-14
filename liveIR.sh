@@ -28,7 +28,7 @@ BANNER(){
  |___/_/|_/_/    /_/   /___/_/|_|    /_/ /_//_/  
 
 ${NORMAL}"
-	echo -e "[${YELLOW}rasoat.sh${NORMAL} - VNPT IR-TH] == A Modular of (${BK}CLLF${NORMAL})"
+	echo -e "[${YELLOW}liveIR.sh${NORMAL} - VNPT IR-TH] == A Modular of (${BK}CLLF${NORMAL})"
 }
 
 
@@ -298,7 +298,7 @@ RUN(){
 	USER_SUSPICIUS
 	PERSISTENT_SUSPICIOUS
 
-	if [[ $check_rasoat == true ]]; then
+	if [[ $check_liveIR == true ]]; then
 		VIEW_NETWORK_SUSPICIUS
 		VIEW_PROCESS_SUSPICIUS
 		VIEW_FILES_SUSPICIUS
