@@ -29,7 +29,7 @@ Example Usage:
 
 
 ```diff
-- I will not update CLLF_Restricted_SHELL.sh more, pls use CLLF.sh or Edit manual you script
+- I will not update CLLF_Restricted_SHELL.sh anymore, pls use CLLF.sh or Edit your script manually
 
 ```
 
