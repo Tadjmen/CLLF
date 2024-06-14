@@ -78,7 +78,7 @@ XM:~ chmod +x CLLF.sh && ./CLLF.sh
 Error: ./CLLF.sh : /bin/bash^M : bad interpretor: No such file or directory
                                                     
 # fix
-XM:~ sed -i -e 's/\r$//' install.sh
+XM:~ sed -i -e 's/\r$//' CLLF.sh
 ```
 
 ## Extract the Files after collecting
