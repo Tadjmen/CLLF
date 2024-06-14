@@ -58,7 +58,7 @@ Example Usage:
 # 
 #
 #
-#run_liveIR=true                                                                     Live IR
+#run_liveIR=true                                                                      Live IR
 #check_liveIR=true                                                                    Check results Live IR
 #get_metadatatime=true                                                                Get all metadata off file and folder, Like MFT in Windows
 #get_config=false                                                                     Just copy Full /ETC folder ;D
