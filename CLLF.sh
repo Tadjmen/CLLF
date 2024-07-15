@@ -279,17 +279,17 @@ GET_PROCESS(){
 	mkdir PROCESS && cd PROCESS
 	echo "	  Collecting pstree, Information of running process  ..."
 	echo -e "-------------------------------------" >> Display_process.txt
-	echo -e "Pstree" >> Disk_info.txt
+	echo -e "Pstree" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	pstree > "pstree.txt" 2>> ../err
+	pstree > "Display_process.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Display_process.txt
-	echo -e "PS FXAU" >> Disk_info.txt
+	echo -e "PS FXAU" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	ps faux > "ps_faux.txt" 2>> ../err
+	ps faux > "Display_process.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Display_process.txt
-	echo -e "TOP" >> Disk_info.txt
+	echo -e "TOP" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	top -H -b -n 1 > "top.txt" 2>> ../err
+	top -H -b -n 1 > "Display_process.txt" 2>> ../err
 	echo "	  Collecting the process hashes..."
 	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
