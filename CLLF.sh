@@ -108,27 +108,27 @@ GET_SYSTEM_INFO(){
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "whoami" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	whoami > "Systeminfo.txt" 2>> ../err
+	whoami >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "uptime" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	uptime > "Systeminfo.txt" 2>> ../err
+	uptime >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "ipconfig" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	ip a > "Systeminfo.txt" 2>> ../err
+	ip a >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "hostname" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	hostname > "Systeminfo.txt" 2>> ../err
+	hostname >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "uname -a" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	uname -a > "Systeminfo.txt" 2>> ../err
+	uname -a >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "OS release" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	cat /etc/os-release > "Systeminfo.txt" 2>> ../err
+	cat /etc/os-release >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "Linux release" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
@@ -178,31 +178,31 @@ GET_DISK(){
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "List partition" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	fdisk -l > "Disk_info.txt" 2>> ../err
+	fdisk -l >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	cat /proc/partitions > "Disk_info.txt" 2>> ../err
+	cat /proc/partitions >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "Disk filesystem" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	df -h > "Disk_info.txt" 2>> ../err
+	df -h >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "Mount list" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	findmnt -a -A > "Disk_info.txt" 2>> ../err
+	findmnt -a -A >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "Display information about volume groups, logical volumes" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	vgdisplay -v > "Disk_info.txt" 2>> ../err
+	vgdisplay -v >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	lvdisplay -v > "Disk_info.txt" 2>> ../err
+	lvdisplay -v >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	vgs --all > "Disk_info.txt" 2>> ../err
+	vgs --all >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	lvs --all > "Disk_info.txt" 2>> ../err
-	free > "free_mem.txt" 2>> ../err
+	lvs --all >> "Disk_info.txt" 2>> ../err
+	free >> "free_mem.txt" 2>> ../err
 	echo "	  Collecting fstab  ..."
-	cat /etc/fstab > "fstab.txt" 2>> ../err
-	cat /etc/mtab > "mtab.txt" 2>> ../err
+	cat /etc/fstab >> "fstab.txt" 2>> ../err
+	cat /etc/mtab >> "mtab.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Disks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
@@ -281,15 +281,15 @@ GET_PROCESS(){
 	echo -e "-------------------------------------" >> Display_process.txt
 	echo -e "Pstree" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	pstree > "Display_process.txt" 2>> ../err
+	pstree >> "Display_process.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Display_process.txt
 	echo -e "PS FXAU" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	ps faux > "Display_process.txt" 2>> ../err
+	ps faux >> "Display_process.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Display_process.txt
 	echo -e "TOP" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	top -H -b -n 1 > "Display_process.txt" 2>> ../err
+	top -H -b -n 1 >> "Display_process.txt" 2>> ../err
 	echo "	  Collecting the process hashes..."
 	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
