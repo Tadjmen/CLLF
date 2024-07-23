@@ -466,7 +466,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden DIR at /..."
- 	find / -type d -name ".*"  > hidden-folder.txt 2>> ../err
+ 	find /home /root /back* /var /tmp -type d -name ".*"  > hidden-folder.txt 2>> ../err
 	echo "	  Collecting hidden home files..."
 	if which timeout &>/dev/null; then
 		timeout 1800s grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
@@ -555,7 +555,7 @@ GET_WEBSERVERSCRIPTS(){
 GET_SSHKEY(){ #Production
 	mkdir SSH-FOLDERS && cd SSH-FOLDERS
 	echo "	  Collecting .ssh folder..."
-	find / -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
+	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SSH FOLDER are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
@@ -569,7 +569,7 @@ GET_HISTORIES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Histories... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
-	find / -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
+	find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
@@ -587,7 +587,7 @@ GET_SUSPICIOUS(){
 	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" 2>> ../err
  	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting SUID-SGID File ..."
-	find / -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
+	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
