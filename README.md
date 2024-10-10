@@ -1,4 +1,4 @@
-# Collect Linux Logs Forensic
+# CLLF - Collect Linux Logs Forensic
 ## Usage
 [Just run with root]
 * ./CLLF.sh [-h]  (For most cases).
