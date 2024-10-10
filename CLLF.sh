@@ -139,14 +139,17 @@ GET_SYSTEM_INFO(){
 	printenv > "printenv.txt" 2>> ../err
 	set > "set.txt" 2>> ../err
 	#This saves loaded modules
-	lsmod > "lsmod.txt" 2>> ../err
-	cat /proc/modules > "proc_modules.txt" 2>> ../err
+	echo -e "lsmod > "all_loaded_modules.txt"" >> all_loaded_modules.txt
+	echo -e "-------------------------------------" >> all_loaded_modules.txt
+	lsmod > "all_loaded_modules.txt" 2>> ../err
+	echo -e "-------------------------------------" >> all_loaded_modules.txt
+	echo -e "cat /proc/modules" >> all_loaded_modules.txt
+	echo -e "-------------------------------------" >> all_loaded_modules.txt
+	cat /proc/modules >> "all_loaded_modules.txt" 2>> ../err
 	echo "	  Collecting modules info..."
 	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do echo -e "\nModule: $i"; modinfo $i ; done > modules_info.txt 2>> ../err
 	echo "	  Collecting hash loaded modules..."
 	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do modinfo $i | grep "filename:" | awk '{print $2}' | xargs -I{} sha1sum {} ; done > modules_sha1.txt 2>> ../err
-	#Sudo version
-	sudo -V "Sudo_Ver.txt" 2>> ../err
 	echo "	  Collecting mount..."
 	mount > mount.txt 2>> ../err
 	
@@ -201,8 +204,7 @@ GET_DISK(){
 	lvs --all >> "Disk_info.txt" 2>> ../err
 	free >> "free_mem.txt" 2>> ../err
 	echo "	  Collecting fstab  ..."
-	cat /etc/fstab >> "fstab.txt" 2>> ../err
-	cat /etc/mtab >> "mtab.txt" 2>> ../err
+	cat /etc/fstab >> "startup_mount_fstab.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Disks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
@@ -506,16 +508,16 @@ GET_SYS_LOGS(){
 	journalctl -k > "journalctl_k.txt" 2>> ../err
 	cat /var/log/**audit** 2>> ../err | more > "auditd.txt" 2>> ../err
 	cat /var/log/boot** 2>> ../err | more > "boot.txt" 2>> ../err
-	utmpdump /var/log/btmp** 2>> ../err | more > "btmp.txt" 2>> ../err
-	utmpdump /var/log/wtmp** 2>> ../err | more > "wtmp.txt" 2>> ../err
- 	utmpdump /var/log/utmp** 2>> ../err | more > "utmp.txt" 2>> ../err
-  	utmpdump /var/run/utmp 2>> ../err | more > "utmp.txt" 2>> ../err
+	utmpdump /var/log/btmp** 2>> ../err | more > "invalid_login_attempts.txt" 2>> ../err
+	utmpdump /var/log/wtmp** 2>> ../err | more > "login_logout_activity.txt" 2>> ../err
+ 	utmpdump /var/log/utmp** 2>> ../err | more > "current_session_active.txt" 2>> ../err
+  	utmpdump /var/run/utmp 2>> ../err | more > "current_session_active.txt" 2>> ../err
 	cat /var/log/apt/** 2>> ../err | more > "apt.txt" 2>> ../err
 	cat /var/log/kern** 2>> ../err | more > "kern.txt" 2>> ../err
 	cat /var/log/mail** 2>> ../err | more > "mail.txt" 2>> ../err
 	cat /var/log/message** 2>> ../err | more > "message.txt" 2>> ../err
 	cat /var/log/secure** 2>> ../err | more > "secure.txt" 2>> ../err
-	cat /var/log/**auth** 2>> ../err | more > "auditd.txt" 2>> ../err
+	cat /var/log/**auth** 2>> ../err | more > "auth.txt" 2>> ../err
 	cat /var/log/syslog** 2>> ../err | more > "syslog.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
@@ -569,7 +571,11 @@ GET_HISTORIES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Histories... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
-	find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
+	if which timeout &>/dev/null; then
+		timeout 1800s find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
+	else
+		find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
+	fi
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
