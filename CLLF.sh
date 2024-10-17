@@ -154,13 +154,23 @@ GET_SYSTEM_INFO(){
 	mount > mount.txt 2>> ../err
 	
 	if $get_metadatatime; then
-		if which stat &>/dev/null; then
-			echo "	  Collecting ALL metadata system Time - Just wait..."
-			echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -mount -exec sh -c 'if [ $(find "$1" -maxdepth 1 -type f | wc -l) -le 1000 ]; then stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" "$1"; fi' sh {} \; >> metadata-ALLtimes.csv 2>> ../err
+		echo "	  Collecting metadata-time..."
+		if [ "$(uname -m)" = "x86_64" ]; then
+			./../../bin/metadatatime_x86_64 2>> ../err
+		elif [ "$(uname -m)" = "i686" ] || [ "$(uname -m)" = "i586" ] || [ "$(uname -m)" = "i386" ]; then
+			./../../bin/metadatatime_i386 2>> ../err
 		else 
-			echo "	  Collecting metadata-accesstimes..."
-			find / -mount -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv 2>> ../err
+			echo -e "Check architecture" >> "metadata-time.csv" 2>> ../err
 		fi
+
+		#OLD get metadata
+		#if which stat &>/dev/null; then
+		#	echo "	  Collecting ALL metadata system Time - Just wait..."
+		#	echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -mount -exec sh -c 'if [ $(find "$1" -maxdepth 1 -type f | wc -l) -le 1000 ]; then stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" "$1"; fi' sh {} \; >> metadata-ALLtimes.csv 2>> ../err
+		#else 
+		#	echo "	  Collecting metadata-accesstimes..."
+		#	find / -mount -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv 2>> ../err
+		#fi
 	else
 		echo "	  NOT Collect metadata-accesstimes..."
 	fi
