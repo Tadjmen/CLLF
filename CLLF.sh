@@ -176,7 +176,7 @@ GET_SYSTEM_INFO(){
 	fi
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SYSTEM_INFO are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -216,7 +216,7 @@ GET_DISK(){
 	echo "	  Collecting fstab  ..."
 	cat /etc/fstab >> "startup_mount_fstab.txt" >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Disks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -255,7 +255,7 @@ GET_PACKAGES(){
 	echo "	  Collecting snap list  ..."
 	snap list > "snap_list.txt" >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Packages  are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -278,7 +278,7 @@ GET_ACCOUNT(){
 	echo "	  Collecting information about users who are currently logged in  ..."
 	who -alpu > "who_alpu.txt" >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Accounts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -318,7 +318,7 @@ GET_PROCESS(){
 	ls -latr /var/run 2>/dev/null > TEMP-VAR_RUN.txt >>../err 2>&1
 	ls -latr /run 2>/dev/null > TEMP-RUN.txt >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Process are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -345,7 +345,7 @@ GET_SERVICES(){
 	systemctl --type=service --state=running > "systemctl_services_running.txt" >>../err 2>&1
 	ls -l /etc/init.d/* > "ls_etc_initd.txt" >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: services are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -369,7 +369,7 @@ GET_OPENED_PORTS(){
 	fi
 	
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: ports are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -446,7 +446,7 @@ GET_NETWORK_INFO(){
 	fi
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: NETWORK INFO are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -474,7 +474,7 @@ GET_TASKS(){
 	cat /etc/udev/rules.d/* | grep "RUN" > "udev_rules_run.txt" >>../err 2>&1
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: tasks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -495,7 +495,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	fi
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -509,7 +509,7 @@ GET_ETC(){
 	echo "	  Collecting Full_Config..."
 	tar zcf ETC.tar.gz /etc >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Full_Config are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -538,7 +538,7 @@ GET_SYS_LOGS(){
 	cat /var/log/**auth** >>../err 2>&1 | more > "auth.txt" >>../err 2>&1
 	cat /var/log/syslog** >>../err 2>&1 | more > "syslog.txt" >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -553,7 +553,7 @@ GET_FULL_LOGS(){
 	echo "	  Collecting FULL Logs folder..."
 	tar -czvf Full-var-log.tar.gz --dereference --hard-dereference --sparse /var/log > Full-var-log-list.txt >>../err 2>&1
 		echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: FULL Logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -567,7 +567,7 @@ GET_WEBSERVERSCRIPTS(){
 	echo "	  Collecting WEBSERVERSCRIPTS..."
 	find /var/www/ -type f \( -iname \*.py -o -iname \*.php -o -iname \*.js -o -iname \*.rb -o -iname \*.pl -o -iname \*.cgi -o -iname \*.sh -o -iname \*.go -o -iname \*.war -o -iname \*.config -o -iname \*.conf \) -print0 >>../err 2>&1 | xargs -0 tar -czvf WEBSERVERSCRIPTS.tar.gz > WEBSERVERSCRIPTS.txt >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: web server scripts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..  
+	cd $BASEDIR
 }
 
 
@@ -577,7 +577,7 @@ GET_SSHKEY(){ #Production
 	echo "	  Collecting .ssh folder..."
 	find /home /root /back* -xdev -type d -name .ssh -print0 >>../err 2>&1 | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SSH FOLDER are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..
+	cd $BASEDIR
 }
 
 
@@ -595,7 +595,7 @@ GET_HISTORIES(){
 		find /home /root /back* -type f -iname ".*_history" -print0 >>../err 2>&1 | xargs -0 tar -czvf histories.tar.gz  > histories.txt >>../err 2>&1
 	fi
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..  
+	cd $BASEDIR
 }
 
 
@@ -613,7 +613,7 @@ GET_SUSPICIOUS(){
 	echo "	  Collecting SUID-SGID File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 >>../err 2>&1 | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt >>../err 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd ..  
+	cd $BASEDIR
 }
 
 
@@ -621,7 +621,7 @@ GET_SUSPICIOUS(){
 CLEAN_UP(){ #Production
 
 	# Archive/Compress files
-	cd ..
+	cd $BASEDIR
 	echo " "
 	echo -e " Creating $OUTDIR.tar.gz "
 	tar -czf "$OUTDIR.tar.gz" -C "$OUTDIR" . 2>/dev/null
@@ -672,7 +672,7 @@ RUN(){
 			if [[ $varchoice =~ ^[Yy]$ ]]; then
 				get_logs_confirm=true
 			else
-				cd ..
+				cd $BASEDIR
 				rm -rf $OUTDIR
 				exit 0;
 			fi
