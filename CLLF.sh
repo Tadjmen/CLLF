@@ -156,8 +156,10 @@ GET_SYSTEM_INFO(){
 	if $get_metadatatime; then
 		echo "	  Collecting metadata-time..."
 		if [ "$(uname -m)" = "x86_64" ]; then
+			chmod +x $BASEDIR/bin/metadatatime_x86_64 >>../err 2>&1
 			$BASEDIR/bin/metadatatime_x86_64 >>../err 2>&1
 		elif [ "$(uname -m)" = "i686" ] || [ "$(uname -m)" = "i586" ] || [ "$(uname -m)" = "i386" ]; then
+			chmod +x $BASEDIR/bin/metadatatime_i386 >>../err 2>&1
 			$BASEDIR/bin/metadatatime_i386 >>../err 2>&1
 		else 
 			echo -e "Check architecture" >> "metadata-time.csv" >>../err 2>&1
