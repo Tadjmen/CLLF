@@ -460,7 +460,6 @@ GET_TASKS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing tasks ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SCHEDULE_TASKS && cd SCHEDULE_TASKS
 	echo "	  Collecting Task Scheduler..."
-<<<<<<< HEAD
 	(ls -la /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "ALL_cron.txt" 2>> ../err
 	(cat /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "ALL_cron.txt" 2>> ../err
 	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_User.txt" 2>> ../err
@@ -470,12 +469,6 @@ GET_TASKS(){
 	(cat /etc/*.bashrc) > "bashrc-config.txt" 2>> ../err
 	(cat /etc/profile /etc/profile.d/* ) > "profile-config.txt" 2>> ../err
 	(cat ~/.bash_profile ~/.bash_login ~/.profile ) > "found_first_to_executed.txt" 2>> ../err
-=======
-	(cat /etc/*cron**/* /etc/cron* /var/spool/**/cron*) > "ALL_cron.txt" >>../err 2>&1
-	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_user.txt" >>../err 2>&1
-	(cat /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "systemd.txt" >>../err 2>&1
-	(cat /etc/rc*.d**/* /etc/rc.local*) > "rc.txt" >>../err 2>&1
->>>>>>> 92e830a56ea1a24d25cf7700cfde2c1e7ea1dc93
 	echo "	  Collecting timers list..."
    	systemctl list-timers --all > "list-timers.txt" >>../err 2>&1
 	echo "	  Collecting XDG Autostart..."
