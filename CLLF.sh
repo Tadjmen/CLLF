@@ -92,10 +92,10 @@ while [ -n "$1" ]; do
 done
 
 if [[ $OUTDIR == /* ]]; then
-    mkdir -p "$OUTDIR"
+	mkdir -p "$OUTDIR"
 else
-    OUTDIR="$BASEDIR/$OUTDIR"
-    mkdir -p "$OUTDIR"
+	OUTDIR="$BASEDIR/$OUTDIR"
+	mkdir -p "$OUTDIR"
 fi
 cd "$OUTDIR"
 touch err
