@@ -28,11 +28,6 @@ Example Usage:
 ```
 
 
-```diff
-- I will not update CLLF_Restricted_SHELL.sh anymore, pls use CLLF.sh or Edit your script manually
-
-```
-
 **Syntax Usage CLLF_Restricted_SHELL.sh**: 	
 ```bash
 ./CLLF_Restricted_SHELL.sh [-l full/lite] [-o output destination]
@@ -49,6 +44,9 @@ Example Usage:
 
 ./CLLF.sh -l full -o 10.0.1.134
 ```
+> [!WARNING]
+> I will not update CLLF_Restricted_SHELL.sh anymore, pls use CLLF.sh or Edit your script manually.
+
 
 
 ## Edit Config File at CLLF.config
@@ -71,7 +69,7 @@ Example Usage:
 ################################################
 ~~~
 
-## Fix errors while using CLLF
+## Fix some errors while using CLLF
 
 ```bash
 XM:~ chmod +x CLLF.sh && ./CLLF.sh
