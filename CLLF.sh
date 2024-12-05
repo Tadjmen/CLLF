@@ -91,11 +91,14 @@ while [ -n "$1" ]; do
 	shift
 done
 
-
-mkdir "$OUTDIR"
+if [[ $OUTDIR == /* ]]; then
+    mkdir -p "$OUTDIR"
+else
+    OUTDIR="$BASEDIR/$OUTDIR"
+    mkdir -p "$OUTDIR"
+fi
 cd "$OUTDIR"
 touch err
-
 
 #@> GET SYSTEM INFO
 GET_SYSTEM_INFO(){
@@ -108,70 +111,70 @@ GET_SYSTEM_INFO(){
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "whoami" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	whoami >> "Systeminfo.txt" >>../err 2>&1
+	whoami >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "uptime" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	uptime >> "Systeminfo.txt" >>../err 2>&1
+	uptime >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "ipconfig" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	ip a >> "Systeminfo.txt" >>../err 2>&1
+	ip a >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "hostname" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	hostname >> "Systeminfo.txt" >>../err 2>&1
+	hostname >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "uname -a" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	uname -a >> "Systeminfo.txt" >>../err 2>&1
+	uname -a >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "OS release" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	cat /etc/os-release >> "Systeminfo.txt" >>../err 2>&1
+	cat /etc/os-release >> "Systeminfo.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Systeminfo.txt
 	echo -e "Linux release" >> Systeminfo.txt
 	echo -e "-------------------------------------" >> Systeminfo.txt
-	cat /proc/version> "version.txt" >>../err 2>&1
-	cat /proc/cpuinfo > "cpuinfo.txt" >>../err 2>&1
-	cat /proc/meminfo > "meminfo.txt" >>../err 2>&1
- 	ls -lah /var/log/ > "var_log_directory_listing.txt" >>../err 2>&1
-	printenv > "printenv.txt" >>../err 2>&1
-	set > "set.txt" >>../err 2>&1
+	cat /proc/version> "version.txt" 2>> ../err
+	cat /proc/cpuinfo > "cpuinfo.txt" 2>> ../err
+	cat /proc/meminfo > "meminfo.txt" 2>> ../err
+ 	ls -lah /var/log/ > "var_log_directory_listing.txt" 2>> ../err
+	printenv > "printenv.txt" 2>> ../err
+	set > "set.txt" 2>> ../err
 	#This saves loaded modules
 	echo -e "lsmod > "all_loaded_modules.txt"" >> all_loaded_modules.txt
 	echo -e "-------------------------------------" >> all_loaded_modules.txt
-	lsmod > "all_loaded_modules.txt" >>../err 2>&1
+	lsmod > "all_loaded_modules.txt" 2>> ../err
 	echo -e "-------------------------------------" >> all_loaded_modules.txt
 	echo -e "cat /proc/modules" >> all_loaded_modules.txt
 	echo -e "-------------------------------------" >> all_loaded_modules.txt
-	cat /proc/modules >> "all_loaded_modules.txt" >>../err 2>&1
+	cat /proc/modules >> "all_loaded_modules.txt" 2>> ../err
 	echo "	  Collecting modules info..."
-	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do echo -e "\nModule: $i"; modinfo $i ; done > modules_info.txt >>../err 2>&1
+	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do echo -e "\nModule: $i"; modinfo $i ; done > modules_info.txt 2>> ../err
 	echo "	  Collecting hash loaded modules..."
-	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do modinfo $i | grep "filename:" | awk '{print $2}' | xargs -I{} sha1sum {} ; done > modules_sha1.txt >>../err 2>&1
+	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do modinfo $i | grep "filename:" | awk '{print $2}' | xargs -I{} sha1sum {} ; done > modules_sha1.txt 2>> ../err
 	echo "	  Collecting mount..."
-	mount > mount.txt >>../err 2>&1
+	mount > mount.txt 2>> ../err
 	
 	if $get_metadatatime; then
 		echo "	  Collecting metadata-time..."
 		if [ "$(uname -m)" = "x86_64" ]; then
-			chmod +x $BASEDIR/bin/metadatatime_x86_64 >>../err 2>&1
-			$BASEDIR/bin/metadatatime_x86_64 >>../err 2>&1
+			chmod +x $BASEDIR/bin/metadatatime_x86_64 2>> ../err
+			$BASEDIR/bin/metadatatime_x86_64 2>> ../err
 		elif [ "$(uname -m)" = "i686" ] || [ "$(uname -m)" = "i586" ] || [ "$(uname -m)" = "i386" ]; then
-			chmod +x $BASEDIR/bin/metadatatime_i386 >>../err 2>&1
-			$BASEDIR/bin/metadatatime_i386 >>../err 2>&1
+			chmod +x $BASEDIR/bin/metadatatime_i386 2>> ../err
+			$BASEDIR/bin/metadatatime_i386 2>> ../err
 		else 
-			echo -e "Check architecture" >> "metadata-time.csv" >>../err 2>&1
+			echo -e "Check architecture" >> "metadata-time.csv" 2>> ../err
 		fi
 
 		#OLD get metadata
 		#if which stat &>/dev/null; then
 		#	echo "	  Collecting ALL metadata system Time - Just wait..."
-		#	echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -mount -exec sh -c 'if [ $(find "$1" -maxdepth 1 -type f | wc -l) -le 1000 ]; then stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" "$1"; fi' sh {} \; >> metadata-ALLtimes.csv >>../err 2>&1
+		#	echo -e "Permission,uOwner,gOwner,Size, File Name,Create Time, Access Time, Modify Time, Status Change Time" > metadata-ALLtimes.csv | find / -mount -exec sh -c 'if [ $(find "$1" -maxdepth 1 -type f | wc -l) -le 1000 ]; then stat --printf="%A,%U,%G,%s,%n,%w,%x,%y,%z\n" "$1"; fi' sh {} \; >> metadata-ALLtimes.csv 2>> ../err
 		#else 
 		#	echo "	  Collecting metadata-accesstimes..."
-		#	find / -mount -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv >>../err 2>&1
+		#	find / -mount -printf "%CY-%Cm-%Cd %CT,%M,%s,%u,%g,%h,%f\n" > metadata-accesstimes.csv 2>> ../err
 		#fi
 	else
 		echo "	  NOT Collect metadata-accesstimes..."
@@ -193,30 +196,30 @@ GET_DISK(){
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "List partition" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	fdisk -l >> "Disk_info.txt" >>../err 2>&1
+	fdisk -l >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	cat /proc/partitions >> "Disk_info.txt" >>../err 2>&1
+	cat /proc/partitions >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "Disk filesystem" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	df -h >> "Disk_info.txt" >>../err 2>&1
+	df -h >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "Mount list" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	findmnt -a -A >> "Disk_info.txt" >>../err 2>&1
+	findmnt -a -A >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
 	echo -e "Display information about volume groups, logical volumes" >> Disk_info.txt
 	echo -e "-------------------------------------" >> Disk_info.txt
-	vgdisplay -v >> "Disk_info.txt" >>../err 2>&1
+	vgdisplay -v >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	lvdisplay -v >> "Disk_info.txt" >>../err 2>&1
+	lvdisplay -v >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	vgs --all >> "Disk_info.txt" >>../err 2>&1
+	vgs --all >> "Disk_info.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Disk_info.txt
-	lvs --all >> "Disk_info.txt" >>../err 2>&1
-	free >> "free_mem.txt" >>../err 2>&1
+	lvs --all >> "Disk_info.txt" 2>> ../err
+	free >> "free_mem.txt" 2>> ../err
 	echo "	  Collecting fstab  ..."
-	cat /etc/fstab >> "startup_mount_fstab.txt" >>../err 2>&1
+	cat /etc/fstab >> "startup_mount_fstab.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Disks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -236,26 +239,26 @@ GET_PACKAGES(){
 			dpkg -V > deb-package-verify.txt
 		fi
 		echo "	  List installed package by APT..."
-		apt list --installed > "apt_list_installed.txt" >>../err 2>&1
+		apt list --installed > "apt_list_installed.txt" 2>> ../err
 		echo "	  List installed package ..."
-		dpkg -l > "dpkg_l.txt" >>../err 2>&1
-		dpkg-query -l > "dpkg_query.txt" >>../err 2>&1
+		dpkg -l > "dpkg_l.txt" 2>> ../err
+		dpkg-query -l > "dpkg_query.txt" 2>> ../err
 	else 
 		if $verify_package; then
 			rpm -qVa > rpm-package-verify.txt
 		fi
 		echo "	  List installed package by yum, dnf..."
   		if which yum &>/dev/null; then
-			yum list installed > "yum_list_installed.txt" >>../err 2>&1
+			yum list installed > "yum_list_installed.txt" 2>> ../err
    		else
-			dnf list installed > "dnf_list_installed.txt" >>../err 2>&1
+			dnf list installed > "dnf_list_installed.txt" 2>> ../err
    		fi
-		rpm -qa > "rpm_qa.txt" >>../err 2>&1
-		rpm -Va > "rpm_Va.txt" >>../err 2>&1
+		rpm -qa > "rpm_qa.txt" 2>> ../err
+		rpm -Va > "rpm_Va.txt" 2>> ../err
 	fi
 	
 	echo "	  Collecting snap list  ..."
-	snap list > "snap_list.txt" >>../err 2>&1
+	snap list > "snap_list.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Packages  are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -269,16 +272,16 @@ GET_ACCOUNT(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing users and groups ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir ACCOUNTS && cd ACCOUNTS
 	echo "	  Collecting passwd, shadow, group  ..."
-	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -vE '(nologin|halt|false|shutdown|sync)' | sort > "etc_passwd_login.txt" >>../err 2>&1
-	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -E '(nologin|halt|false|shutdown|sync)' | sort > "etc_passwd_nologin.txt" >>../err 2>&1
-	cat /etc/sudoers > "etc_sudoers.txt" >>../err 2>&1
-	cat /etc/group > "etc_group.txt" >>../err 2>&1
-	cat /etc/shadow > "etc_shadow.txt" >>../err 2>&1
-	cat /etc/gshadow > "etc_gshadow.txt" >>../err 2>&1
+	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -vE '(nologin|halt|false|shutdown|sync)' | sort > "etc_passwd_login.txt" 2>> ../err
+	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -E '(nologin|halt|false|shutdown|sync)' | sort > "etc_passwd_nologin.txt" 2>> ../err
+	cat /etc/sudoers > "etc_sudoers.txt" 2>> ../err
+	cat /etc/group > "etc_group.txt" 2>> ../err
+	cat /etc/shadow > "etc_shadow.txt" 2>> ../err
+	cat /etc/gshadow > "etc_gshadow.txt" 2>> ../err
 	echo "	  Collecting list of root account  ..."
-	grep ":0:" /etc/passwd > "root_user.txt" >>../err 2>&1
+	grep ":0:" /etc/passwd > "root_user.txt" 2>> ../err
 	echo "	  Collecting information about users who are currently logged in  ..."
-	who -alpu > "who_alpu.txt" >>../err 2>&1
+	who -alpu > "who_alpu.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Accounts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -295,30 +298,30 @@ GET_PROCESS(){
 	echo -e "-------------------------------------" >> Display_process.txt
 	echo -e "Pstree" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	pstree >> "Display_process.txt" >>../err 2>&1
+	pstree >> "Display_process.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Display_process.txt
 	echo -e "PS FXAU" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	ps faux >> "Display_process.txt" >>../err 2>&1
+	ps faux >> "Display_process.txt" 2>> ../err
 	echo -e "-------------------------------------" >> Display_process.txt
 	echo -e "TOP" >> Display_process.txt
 	echo -e "-------------------------------------" >> Display_process.txt
-	top -H -b -n 1 >> "Display_process.txt" >>../err 2>&1
+	top -H -b -n 1 >> "Display_process.txt" 2>> ../err
 	echo "	  Collecting the process hashes..."
-	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt >>../err 2>&1
+	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
-	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > Running-process-exe-links.txt >>../err 2>&1
+	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > Running-process-exe-links.txt 2>> ../err
  	echo "	  Collecting the process environment..."
-	find /proc/[0-9]*/environ | xargs head 2>/dev/null > Running-process-environ.txt >>../err 2>&1
+	find /proc/[0-9]*/environ | xargs head 2>/dev/null > Running-process-environ.txt 2>> ../err
   	echo "	  Collecting the process CWD..."
-	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > Running-process-cwd.txt >>../err 2>&1
+	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > Running-process-cwd.txt 2>> ../err
 	echo "	  Collecting the process cmdline..."
-	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > Running-process-cmdline.txt >>../err 2>&1
+	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > Running-process-cmdline.txt 2>> ../err
  	echo "	  Collecting the process comm..."
-	find /proc/[0-9]*/comm | xargs head 2>/dev/null > Running-process-comm.txt >>../err 2>&1
+	find /proc/[0-9]*/comm | xargs head 2>/dev/null > Running-process-comm.txt 2>> ../err
 	echo "	  Collecting Run-time variable data..."
-	ls -latr /var/run 2>/dev/null > TEMP-VAR_RUN.txt >>../err 2>&1
-	ls -latr /run 2>/dev/null > TEMP-RUN.txt >>../err 2>&1
+	ls -latr /var/run 2>/dev/null > TEMP-VAR_RUN.txt 2>> ../err
+	ls -latr /run 2>/dev/null > TEMP-RUN.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Process are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -332,20 +335,20 @@ GET_SERVICES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing services ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SERVICES && cd SERVICES
 	echo "	  Collecting Information of running services..."
-	systemctl list-units --all > "systemctl_list_units.txt" >>../err 2>&1
-	(ls -la /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "ls_systemd_system.txt" >>../err 2>&1
+	systemctl list-units --all > "systemctl_list_units.txt" 2>> ../err
+	(ls -la /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "ls_systemd_system.txt" 2>> ../err
 	echo "	  Collecting status ALL services..."
-	service --status-all > "service_status_all.txt" >>../err 2>&1
+	service --status-all > "service_status_all.txt" 2>> ../err
 	
 	if which chkconfig &>/dev/null; then
-		chkconfig --list > "chkconfig.txt" >>../err 2>&1
+		chkconfig --list > "chkconfig.txt" 2>> ../err
 	fi
 	
 	echo "	  Collecting list services per Status..."
-	systemctl --type=service --state=failed > "systemctl_services_failed.txt" >>../err 2>&1
-	systemctl --type=service --state=active > "systemctl_services_active.txt" >>../err 2>&1
-	systemctl --type=service --state=running > "systemctl_services_running.txt" >>../err 2>&1
-	ls -l /etc/init.d/* > "ls_etc_initd.txt" >>../err 2>&1
+	systemctl --type=service --state=failed > "systemctl_services_failed.txt" 2>> ../err
+	systemctl --type=service --state=active > "systemctl_services_active.txt" 2>> ../err
+	systemctl --type=service --state=running > "systemctl_services_running.txt" 2>> ../err
+	ls -l /etc/init.d/* > "ls_etc_initd.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: services are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -359,15 +362,15 @@ GET_OPENED_PORTS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing ports ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir PORTS && cd PORTS
 	echo "	  Collecting OPENED PORTS..."
-	ss --all > "ss_all.txt" >>../err 2>&1
-	ss -lntu > "ss_lntu.txt" >>../err 2>&1
-	netstat -a > "netstat_a.txt" >>../err 2>&1
-	netstat -plntu > "netstat_with_PID.txt" >>../err 2>&1
+	ss --all > "ss_all.txt" 2>> ../err
+	ss -lntu > "ss_lntu.txt" 2>> ../err
+	netstat -a > "netstat_a.txt" 2>> ../err
+	netstat -plntu > "netstat_with_PID.txt" 2>> ../err
 	
 	if which lsof &>/dev/null; then
 		echo "	  Collecting List open files..."
-  		lsof > "List_open_files.txt" >>../err 2>&1
-		lsof -i -n -P > "List_open_files_contain_ipv4.txt" >>../err 2>&1
+  		lsof > "List_open_files.txt" 2>> ../err
+		lsof -i -n -P > "List_open_files_contain_ipv4.txt" 2>> ../err
 	fi
 	
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: ports are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -384,67 +387,67 @@ GET_NETWORK_INFO(){
 	mkdir NETWORK_INFO && cd NETWORK_INFO
 	# IP
 	echo "	  Collecting IP Address, RX, TX packets..."
-	ip -s -s link > "all_rx_tx_packets.txt" >>../err 2>&1
-	ip addr > "ip_addr.txt" >>../err 2>&1
+	ip -s -s link > "all_rx_tx_packets.txt" 2>> ../err
+	ip addr > "ip_addr.txt" 2>> ../err
 	# Other
 	echo "	  Collecting Kernel Interface table..."
-	netstat -i > "netstat_i.txt" >>../err 2>&1
-	nmcli device status > "nmcli_device_status.txt" >>../err 2>&1
+	netstat -i > "netstat_i.txt" 2>> ../err
+	nmcli device status > "nmcli_device_status.txt" 2>> ../err
 	#  information on the hardware configuration
 	echo "	  Collecting hardware configuration..."
-	lshw -class network -short > "lshw.txt" >>../err 2>&1
+	lshw -class network -short > "lshw.txt" 2>> ../err
 	
 	if which hwinfo &>/dev/null; then
 		echo "	  Collecting hardware Info..."
-		hwinfo --short --network > "hwinfo.txt" >>../err 2>&1
+		hwinfo --short --network > "hwinfo.txt" 2>> ../err
 	fi
 	
 	echo "	  Collecting Host configuration Network..."
-	cat /etc/hosts > "etc_hosts.txt" >>../err 2>&1
-	cat /etc/hosts.allow > "etc_hosts_allow.txt" >>../err 2>&1
+	cat /etc/hosts > "etc_hosts.txt" 2>> ../err
+	cat /etc/hosts.allow > "etc_hosts_allow.txt" 2>> ../err
 	#Get routing table
 	echo "	  Collecting Routing Table..."
 	
 	if ip route &>/dev/null; then
-		ip route > Network-routetable.txt >>../err 2>&1
+		ip route > Network-routetable.txt 2>> ../err
 	else
-		netstat -rn > Network-routetable.txt >>../err 2>&1
+		netstat -rn > Network-routetable.txt 2>> ../err
 	fi
 		
 	#Get iptables. iptables rules.
 	if which iptables &>/dev/null; then
 		echo "	  Collecting IPtables..."
-		iptables -L -n -v --line-numbers > "iptables_Full.txt" >>../err 2>&1
-		iptables -L > "iptables.txt" >>../err 2>&1
+		iptables -L -n -v --line-numbers > "iptables_Full.txt" 2>> ../err
+		iptables -L > "iptables.txt" 2>> ../err
 	fi
 
 	#Get iptables. iptables rules.
 	if which iptables &>/dev/null; then
 		echo "	  Collecting IP6tables..."
-		ip6tables -L -n -v > "ip6tables_Full.txt" >>../err 2>&1
+		ip6tables -L -n -v > "ip6tables_Full.txt" 2>> ../err
 	fi
 	
 	#Get UFW status
 	if which ufw &>/dev/null; then
 		echo "	  Collecting UFW status..."
-		ufw status verbose > "UFW_status.txt" >>../err 2>&1
+		ufw status verbose > "UFW_status.txt" 2>> ../err
 	fi
 	
 	#Get firewall-cmd information
 	if which firewall-cmd &>/dev/null; then
 		echo "	  Collecting firewall-cmd status..."
-		firewall-cmd --list-services > "firewall_cmd_list_services.txt" >>../err 2>&1
-		firewall-cmd --list-all > "firewall_cmd_list_all.txt" >>../err 2>&1
-		firewall-cmd --list-ports > "firewall_cmd_list_ports.txt" >>../err 2>&1
+		firewall-cmd --list-services > "firewall_cmd_list_services.txt" 2>> ../err
+		firewall-cmd --list-all > "firewall_cmd_list_all.txt" 2>> ../err
+		firewall-cmd --list-ports > "firewall_cmd_list_ports.txt" 2>> ../err
 	fi
 
 
 	#Get SeLinux Verbose information
 	if which sestatus &>/dev/null; then
 		echo "	  Collecting SELinux status..."
-		sestatus -v > SELinux-selinux.txt >>../err 2>&1
+		sestatus -v > SELinux-selinux.txt 2>> ../err
 		echo "	  Collecting SELinux booleans..."
-		getsebool -a > SELinux-booleans.txt >>../err 2>&1
+		getsebool -a > SELinux-booleans.txt 2>> ../err
 	fi
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: NETWORK INFO are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -470,15 +473,15 @@ GET_TASKS(){
 	(cat /etc/profile /etc/profile.d/* ) > "profile-config.txt" 2>> ../err
 	(cat ~/.bash_profile ~/.bash_login ~/.profile ) > "found_first_to_executed.txt" 2>> ../err
 	echo "	  Collecting timers list..."
-   	systemctl list-timers --all > "list-timers.txt" >>../err 2>&1
+   	systemctl list-timers --all > "list-timers.txt" 2>> ../err
 	echo "	  Collecting XDG Autostart..."
-	cat /home/*/.config/autostart/* > "xdg-autostart.txt" >>../err 2>&1
+	cat /home/*/.config/autostart/* > "xdg-autostart.txt" 2>> ../err
 	echo "	  Collecting MOTD ..."
-	cat /etc/update-motd.d/* > "motd.txt" >>../err 2>&1
+	cat /etc/update-motd.d/* > "motd.txt" 2>> ../err
 	echo "	  Collecting APT config ..."
-	cat /etc/apt/apt.conf.d/* > "apt.txt" >>../err 2>&1
+	cat /etc/apt/apt.conf.d/* > "apt.txt" 2>> ../err
 	echo "	  Collecting udev Rules contain RUN..."
-	cat /etc/udev/rules.d/* | grep "RUN" > "udev_rules_run.txt" >>../err 2>&1
+	cat /etc/udev/rules.d/* | grep "RUN" > "udev_rules_run.txt" 2>> ../err
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: tasks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
@@ -493,12 +496,12 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden DIR at /..."
- 	find /home /root /back* /var /tmp -type d -name ".*"  > hidden-folder.txt >>../err 2>&1
+ 	find /home /root /back* /var /tmp -type d -name ".*"  > hidden-folder.txt 2>> ../err
 	echo "	  Collecting hidden home files..."
 	if which timeout &>/dev/null; then
-		timeout 1800s grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 >>../err 2>&1 | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt >>../err 2>&1
+		timeout 1800s grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
 	else
-		grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 >>../err 2>&1 | xargs -0 tar -czvf hidden-user-home-dir.tar.gz  > hidden-user-home-dir-list.txt >>../err 2>&1
+		grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 tar -czvf hidden-user-home-dir.tar.gz  > hidden-user-home-dir-list.txt 2>> ../err
 	fi
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -514,7 +517,7 @@ GET_ETC(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Full_Config ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir FULL_CONFIG && cd FULL_CONFIG
 	echo "	  Collecting Full_Config..."
-	tar zcf ETC.tar.gz /etc >>../err 2>&1
+	tar zcf ETC.tar.gz /etc 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Full_Config are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -528,22 +531,22 @@ GET_SYS_LOGS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Logs ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SYS_LOGS && cd SYS_LOGS
 	echo "	  Collecting popular services Logs..."
-	last -Faixw > "last.txt" >>../err 2>&1
-	journalctl -x > "journalctl_x.txt" >>../err 2>&1
-	journalctl -k > "journalctl_k.txt" >>../err 2>&1
-	cat /var/log/**audit** >>../err 2>&1 | more > "auditd.txt" >>../err 2>&1
-	cat /var/log/boot** >>../err 2>&1 | more > "boot.txt" >>../err 2>&1
-	utmpdump /var/log/btmp** >>../err 2>&1 | more > "invalid_login_attempts.txt" >>../err 2>&1
-	utmpdump /var/log/wtmp** >>../err 2>&1 | more > "login_logout_activity.txt" >>../err 2>&1
- 	utmpdump /var/log/utmp** >>../err 2>&1 | more > "current_session_active.txt" >>../err 2>&1
-  	utmpdump /var/run/utmp >>../err 2>&1 | more > "current_session_active.txt" >>../err 2>&1
-	cat /var/log/apt/** >>../err 2>&1 | more > "apt.txt" >>../err 2>&1
-	cat /var/log/kern** >>../err 2>&1 | more > "kern.txt" >>../err 2>&1
-	cat /var/log/mail** >>../err 2>&1 | more > "mail.txt" >>../err 2>&1
-	cat /var/log/message** >>../err 2>&1 | more > "message.txt" >>../err 2>&1
-	cat /var/log/secure** >>../err 2>&1 | more > "secure.txt" >>../err 2>&1
-	cat /var/log/**auth** >>../err 2>&1 | more > "auth.txt" >>../err 2>&1
-	cat /var/log/syslog** >>../err 2>&1 | more > "syslog.txt" >>../err 2>&1
+	last -Faixw > "last.txt" 2>> ../err
+	journalctl -x > "journalctl_x.txt" 2>> ../err
+	journalctl -k > "journalctl_k.txt" 2>> ../err
+	cat /var/log/**audit** 2>> ../err | more > "auditd.txt" 2>> ../err
+	cat /var/log/boot** 2>> ../err | more > "boot.txt" 2>> ../err
+	utmpdump /var/log/btmp** 2>> ../err | more > "invalid_login_attempts.txt" 2>> ../err
+	utmpdump /var/log/wtmp** 2>> ../err | more > "login_logout_activity.txt" 2>> ../err
+ 	utmpdump /var/log/utmp** 2>> ../err | more > "current_session_active.txt" 2>> ../err
+  	utmpdump /var/run/utmp 2>> ../err | more > "current_session_active.txt" 2>> ../err
+	cat /var/log/apt/** 2>> ../err | more > "apt.txt" 2>> ../err
+	cat /var/log/kern** 2>> ../err | more > "kern.txt" 2>> ../err
+	cat /var/log/mail** 2>> ../err | more > "mail.txt" 2>> ../err
+	cat /var/log/message** 2>> ../err | more > "message.txt" 2>> ../err
+	cat /var/log/secure** 2>> ../err | more > "secure.txt" 2>> ../err
+	cat /var/log/**auth** 2>> ../err | more > "auth.txt" 2>> ../err
+	cat /var/log/syslog** 2>> ../err | more > "syslog.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -558,7 +561,7 @@ GET_FULL_LOGS(){
 	mkdir LOGS_FULL && cd LOGS_FULL
 	#Collect all files in in /var/log folder.
 	echo "	  Collecting FULL Logs folder..."
-	tar -czvf Full-var-log.tar.gz --dereference --hard-dereference --sparse /var/log > Full-var-log-list.txt >>../err 2>&1
+	tar -czvf Full-var-log.tar.gz --dereference --hard-dereference --sparse /var/log > Full-var-log-list.txt 2>> ../err
 		echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: FULL Logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -572,7 +575,7 @@ GET_WEBSERVERSCRIPTS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing web server scripts... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir WEBSERVERSCRIPTS && cd WEBSERVERSCRIPTS
 	echo "	  Collecting WEBSERVERSCRIPTS..."
-	find /var/www/ -type f \( -iname \*.py -o -iname \*.php -o -iname \*.js -o -iname \*.rb -o -iname \*.pl -o -iname \*.cgi -o -iname \*.sh -o -iname \*.go -o -iname \*.war -o -iname \*.config -o -iname \*.conf \) -print0 >>../err 2>&1 | xargs -0 tar -czvf WEBSERVERSCRIPTS.tar.gz > WEBSERVERSCRIPTS.txt >>../err 2>&1
+	find /var/www/ -type f \( -iname \*.py -o -iname \*.php -o -iname \*.js -o -iname \*.rb -o -iname \*.pl -o -iname \*.cgi -o -iname \*.sh -o -iname \*.go -o -iname \*.war -o -iname \*.config -o -iname \*.conf \) -print0 2>> ../err | xargs -0 tar -czvf WEBSERVERSCRIPTS.tar.gz > WEBSERVERSCRIPTS.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: web server scripts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -585,7 +588,7 @@ GET_SSHKEY(){
 	#
 	mkdir SSH-FOLDERS && cd SSH-FOLDERS
 	echo "	  Collecting .ssh folder..."
-	find /home /root /back* -xdev -type d -name .ssh -print0 >>../err 2>&1 | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt >>../err 2>&1
+	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SSH FOLDER are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -600,9 +603,9 @@ GET_HISTORIES(){
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
 	if which timeout &>/dev/null; then
-		timeout 1800s find /home /root /back* -type f -iname ".*_history" -print0 >>../err 2>&1 | xargs -0 tar -czvf histories.tar.gz  > histories.txt >>../err 2>&1
+		timeout 1800s find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
 	else
-		find /home /root /back* -type f -iname ".*_history" -print0 >>../err 2>&1 | xargs -0 tar -czvf histories.tar.gz  > histories.txt >>../err 2>&1
+		find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
 	fi
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
@@ -617,11 +620,11 @@ GET_SUSPICIOUS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing suspicious files... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SUSPICIOUS && cd SUSPICIOUS
 	echo "	  Collecting SUSPICIOUS File ..."
-	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf File_Excuteable_TMP.tar.gz > "File_Excuteable_TMP.txt" >>../err 2>&1
-	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" >>../err 2>&1
- 	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt >>../err 2>&1
+	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf File_Excuteable_TMP.tar.gz > "File_Excuteable_TMP.txt" 2>> ../err
+	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" 2>> ../err
+ 	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting SUID-SGID File ..."
-	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 >>../err 2>&1 | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt >>../err 2>&1
+	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
