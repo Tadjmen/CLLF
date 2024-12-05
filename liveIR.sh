@@ -1,8 +1,6 @@
 #!/bin/bash
 # coded by XuanMike - XM1945
 
-sed -i 's/ = /=/' CLLF.config
-source CLLF.config
 
 #@> COLORS
 BK="\e[7m"
@@ -149,7 +147,6 @@ PERSISTENT_SUSPICIOUS(){
 
 }
 
-${GREEN} ${NORMAL} 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 VIEW_NETWORK_SUSPICIUS(){
