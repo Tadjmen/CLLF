@@ -85,3 +85,21 @@ XM:~ sed -i -e 's/\r$//' CLLF.sh
 XM:~ for file in $(find . -name "*.tar.gz"); do tar -xvf "${file}" -C "$(dirname "${file}")"; done
 ```
 
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="
+      https://api.star-history.com/svg?repos=Tadjmen/CLLF&type=Date&theme=dark
+    "
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="
+      https://api.star-history.com/svg?repos=Tadjmen/CLLF&type=Date
+    "
+  />
+  <img
+    alt="Star History Chart" width="600" height="350"
+    src="https://api.star-history.com/svg?repos=Tadjmen/CLLF&type=Date"
+  />
+</picture>
