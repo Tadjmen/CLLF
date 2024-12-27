@@ -679,7 +679,7 @@ RUN(){
 			echo -e "+---------------------------------------------------------------------------+"
 			echo -e "\n\n"
 		else
-			echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 3
+			echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 1
 			read -p "Choice to continue Y/N:" -n 1 -r varchoice
 			echo
 			if [[ $varchoice =~ ^[Yy]$ ]]; then
