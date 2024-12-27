@@ -84,8 +84,11 @@ XM:~ sed -i -e 's/\r$//' CLLF.sh
 ```bash
 XM:~ for file in $(find . -name "*.tar.gz"); do tar -xvf "${file}" -C "$(dirname "${file}")"; done
 ```
+## 🌠 Star Evolution
 
+Explore the star history of this project and see how it has evolved over time:
 <picture>
+  <p align="center">
   <source
     media="(prefers-color-scheme: dark)"
     srcset="
@@ -102,4 +105,6 @@ XM:~ for file in $(find . -name "*.tar.gz"); do tar -xvf "${file}" -C "$(dirname
     alt="Star History Chart" width="600" height="350"
     src="https://api.star-history.com/svg?repos=Tadjmen/CLLF&type=Date"
   />
+  </p>
 </picture>
+Your support is greatly appreciated. We're grateful for every star! Your backing fuels our passion. ✨
