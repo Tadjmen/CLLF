@@ -2,7 +2,6 @@
 ## Usage
 [Just run with root]
 * ./CLLF.sh [-h]  (For most cases).
-* ./CLLF_Restricted_SHELL.sh -h  (In case Linux shell restricted).
 
 **Syntax Usage CLLF**
 
@@ -27,23 +26,6 @@ Example Usage:
 
 ```
 
-
-**Syntax Usage CLLF_Restricted_SHELL.sh**: 	
-```bash
-./CLLF_Restricted_SHELL.sh [-l full/lite] [-o output destination]
-./CLLF_Restricted_SHELL.sh [-h] [Just run with root]
-
-Flags:
-  -l, --log           Logs collect options        -l full
-        "full" is Full folder /var/log (Maybe so big...)
-        "lite" is Common Linux log files names and usage
-
-Optional Flags:
-  -o, --OUTDIR        Write to output folde       -o "10.0.1.134"
-Example Usage:
-
-./CLLF.sh -l full -o 10.0.1.134
-```
 > [!WARNING]
 > I will not update CLLF_Restricted_SHELL.sh anymore, pls use CLLF.sh or Edit your script manually.
 
