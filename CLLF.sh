@@ -495,15 +495,10 @@ GET_HIDDEN_FILE_FOLDER(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
-	echo "	  Collecting hidden DIR at /..."
- 	find /home /root /back* /var /tmp -type d -name ".*"  > hidden-folder.txt 2>> ../err
-	echo "	  Collecting hidden home files..."
-	if which timeout &>/dev/null; then
-		timeout 1800s grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
-	else
-		grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f6 -d ':' | xargs -I {} find {} ! -path {} -prune -name .\* -print0 2>> ../err | xargs -0 tar -czvf hidden-user-home-dir.tar.gz  > hidden-user-home-dir-list.txt 2>> ../err
-	fi
-
+	echo "	  Collecting hidden File and DIR at /..."
+ 	grep -E ',\./' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv"  > hidden-file-folder.csv 2>> ../err
+	echo "	  Get hidden File and DIR in HOME folder ..."
+	awk -F',' '{print $5}' "$OUTDIR/SYSTEM_INFO/hidden-file-folder.csv"| grep "/home/\|/root/" | 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -625,6 +620,8 @@ GET_SUSPICIOUS(){
  	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting SUID-SGID File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
+	echo "	  Get hidden File and DIR in HOME folder ..."
+	awk -F',' 'NR > 1 && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
