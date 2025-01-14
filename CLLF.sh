@@ -685,28 +685,22 @@ RUN(){
 			fi
 		fi
 	fi
-
 	if $run_liveIR; then
 		/bin/bash "$BASEDIR/liveIR.sh"; sleep 5
 	fi
-
+	GET_SYSTEM_INFO; sleep 5
 	if $get_logs_confirm; then
 		GET_FULL_LOGS
 	fi
-
 	if $get_config; then
 		GET_ETC; sleep 5
 	fi
-
 	if $get_hidden_file_folder; then
 		GET_HIDDEN_FILE_FOLDER; sleep 5
 	fi
-
 	if $get_disk; then
 		GET_DISK; sleep 5
 	fi
-
-	GET_SYSTEM_INFO; sleep 5
 	GET_PACKAGES; sleep 5
 	GET_ACCOUNT; sleep 5
 	GET_PROCESS; sleep 5
