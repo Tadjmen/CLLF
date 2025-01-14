@@ -498,7 +498,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo "	  Collecting hidden File and DIR at /..."
  	grep -E ',\./' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv"  > hidden-file-folder.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
-	awk -F',' '{print $5}' "$OUTDIR/SYSTEM_INFO/hidden-file-folder.csv"| grep "/home/\|/root/" | 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
+	awk -F',' '{print $5}' "$OUTDIR/SYSTEM_INFO/hidden-file-folder.csv"| grep "/home/\|/root/" 2>> ../err | xargs -0 timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -597,11 +597,8 @@ GET_HISTORIES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Histories... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
-	if which timeout &>/dev/null; then
-		timeout 1800s find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
-	else
-		find /home /root /back* -type f -iname ".*_history" -print0 2>> ../err | xargs -0 tar -czvf histories.tar.gz  > histories.txt 2>> ../err
-	fi
+	awk -F',' '{print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv"| grep "_history" 2>> ../err | xargs -0 timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
+
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
