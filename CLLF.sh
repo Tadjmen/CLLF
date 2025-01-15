@@ -608,7 +608,7 @@ GET_SUSPICIOUS(){
 	echo "	  Collecting SUID-SGID File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
 	echo "	  File small less than 1kb..."
-	awk -F',' '$4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
+	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
 	echo "	  Collecting .ssh folder..."
 	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
