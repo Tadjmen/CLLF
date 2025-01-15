@@ -495,10 +495,12 @@ GET_HIDDEN_FILE_FOLDER(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
-	echo "	  Collecting hidden File and DIR at /..."
+	echo "	  Collecting hidden File and DIR /..."
  	awk -F',' '$5 {print}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep '/\.[^/]*' > hidden-file-folder.csv 2>> ../err
+	echo "	  Collecting hidden File and DIR in HOME folder ..."
+	awk -F',' '$5 {print}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder.csv" | grep '/home/\|/root/' > hidden-in-home-dir.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
-	awk -F',' '{print $5}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder.csv" | grep '/\.[^/]*$' 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
+	awk -F',' '{print $5}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-in-home-dir.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden-user-home-dir.tar.gz 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -576,19 +578,6 @@ GET_WEBSERVERSCRIPTS(){
 }
 
 
-#@> GET.ssh folder
-GET_SSHKEY(){
-	#
-	# @desc   :: This function saves ssh infomation
-	#
-	mkdir SSH-FOLDERS && cd SSH-FOLDERS
-	echo "	  Collecting .ssh folder..."
-	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
-	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: SSH FOLDER are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd "$OUTDIR"
-}
-
-
 #@> GET HISTORIES
 GET_HISTORIES(){
 	#
@@ -598,7 +587,6 @@ GET_HISTORIES(){
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
 	awk -F',' '{print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep "_history" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
-
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -611,14 +599,18 @@ GET_SUSPICIOUS(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing suspicious files... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SUSPICIOUS && cd SUSPICIOUS
-	echo "	  Collecting SUSPICIOUS File ..."
-	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf File_Excuteable_TMP.tar.gz > "File_Excuteable_TMP.txt" 2>> ../err
-	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" 2>> ../err
- 	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt 2>> ../err
+	echo "	  Collecting file excute in /tmp..."
+	awk -F',' '$1 ~ /^-.*x/ && $5 ~ /^\/tmp\// {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf File_Excuteable_TMP.tar.gz > "File_Excuteable_TMP.txt" 2>> ../err
+	echo "	  Collecting file hidden in /tmp..."
+	awk -F',' '$5 ~ /^\/tmp\/\..*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" 2>> ../err
+	echo "	  Collecting sha256 in /tmp..."
+ 	awk -F',' '$5 ~ /^\/tmp/ && $1 ~ /^-.*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | xargs -I {} sha256sum {} > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting SUID-SGID File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
-	echo "	  Get hidden File and DIR in HOME folder ..."
-	awk -F',' '$4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf hidden-user-home-dir.tar.gz > hidden-user-home-dir-list.txt 2>> ../err
+	echo "	  File small less than 1kb..."
+	awk -F',' '$4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
+	echo "	  Collecting .ssh folder..."
+	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
