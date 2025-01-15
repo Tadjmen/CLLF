@@ -496,11 +496,11 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden File and DIR /..."
- 	awk -F',' '$5 {print}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep '/\.[^/]*' > hidden-file-folder.csv 2>> ../err
+ 	awk -F',' '$5 {print}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep '/\.[^/]*' > all-hidden-file-folder.csv 2>> ../err
 	echo "	  Collecting hidden File and DIR in HOME folder ..."
-	awk -F',' '$5 {print}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder.csv" | grep '/home/\|/root/' > hidden-in-home-dir.csv 2>> ../err
+	awk -F',' '$5 {print}' "$OUTDIR/HIDDEN_FILE_FOLDER/all-hidden-file-folder.csv" | grep '/home/\|/root/' > hidden-file-folder-in-home.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
-	awk -F',' '{print $5}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-in-home-dir.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden-user-home-dir.tar.gz 2>> ../err
+	awk -F',' '{print $5}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder-in-home" | xargs -d '\n' timeout 1800s tar -czvf hidden-file-folder-in-home.tar.gz > /dev/null 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -608,7 +608,7 @@ GET_SUSPICIOUS(){
 	echo "	  Collecting SUID-SGID File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
 	echo "	  File small less than 1kb..."
-	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
+	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
 	echo "	  Collecting .ssh folder..."
 	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -701,7 +701,6 @@ RUN(){
 	GET_NETWORK_INFO; sleep 5
 	GET_TASKS; sleep 5
 	GET_WEBSERVERSCRIPTS; sleep 5
-	GET_SSHKEY; sleep 5
 	GET_HISTORIES; sleep 5
 	GET_SUSPICIOUS; sleep 5
 	GET_SYS_LOGS; sleep 5
