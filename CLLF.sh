@@ -496,11 +496,11 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden File and DIR /..."
- 	awk -F',' '$5 {print}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep '/\.[^/]*' > all-hidden-file-folder.csv 2>> ../err
+ 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '/\.[^/]*' > all-hidden-file-folder.csv 2>> ../err
 	echo "	  Collecting hidden File and DIR in HOME folder ..."
-	awk -F',' '$5 {print}' "$OUTDIR/HIDDEN_FILE_FOLDER/all-hidden-file-folder.csv" | grep -E '^\/home\/|^\/root\/' > hidden-file-folder-in-home.csv 2>> ../err
+	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '^/home/|^/root/' > hidden-file-folder-in-home.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
-	awk -F',' '{print $5}' "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder-in-home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden-file-folder-in-home.tar.gz > /dev/null 2>&1
+	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder-in-home" | xargs -d '\n' timeout 1800s tar -czvf hidden-file-folder-in-home.tar.gz > /dev/null 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -586,7 +586,7 @@ GET_HISTORIES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Histories... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
-	awk -F',' '{print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep "_history" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
+	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep "_history" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
