@@ -108,39 +108,43 @@ GET_SYSTEM_INFO(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing SYSTEM_INFO... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SYSTEM_INFO && cd SYSTEM_INFO
 	echo "	  Collecting Basic Info..."
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "whoami" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	whoami >> "Systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "uptime" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	uptime >> "Systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "ipconfig" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	ip a >> "Systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "hostname" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	hostname >> "Systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "uname -a" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	uname -a >> "Systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "OS release" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	cat /etc/os-release >> "Systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Systeminfo.txt
-	echo -e "Linux release" >> Systeminfo.txt
-	echo -e "-------------------------------------" >> Systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "whoami" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	whoami >> "systeminfo.txt" 2>> ../err
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "uptime" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	uptime >> "systeminfo.txt" 2>> ../err
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "ipconfig" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	ip a >> "systeminfo.txt" 2>> ../err
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "hostname" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	hostname >> "systeminfo.txt" 2>> ../err
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "uname -a" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	uname -a >> "systeminfo.txt" 2>> ../err
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "OS release" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
+	cat /etc/os-release >> "systeminfo.txt" 2>> ../err
+	echo -e "-------------------------------------" >> systeminfo.txt
+	echo -e "Linux release" >> systeminfo.txt
+	echo -e "-------------------------------------" >> systeminfo.txt
 	cat /proc/version> "version.txt" 2>> ../err
 	cat /proc/cpuinfo > "cpuinfo.txt" 2>> ../err
 	cat /proc/meminfo > "meminfo.txt" 2>> ../err
  	ls -lah /var/log/ > "var_log_directory_listing.txt" 2>> ../err
-	printenv > "printenv.txt" 2>> ../err
-	set > "set.txt" 2>> ../err
+	echo -e "printenv" >> environment_variables.txt
+	echo -e "-------------------------------------" >> environment_variables.txt
+	printenv >> "environment_variables.txt" 2>> ../err
+	echo -e "-------------------------------------" >> environment_variables.txt
+	echo -e "set" >> environment_variables.txt
+	set > "environment_variables.txt" 2>> ../err
 	#This saves loaded modules
 	echo -e "lsmod > "all_loaded_modules.txt"" >> all_loaded_modules.txt
 	echo -e "-------------------------------------" >> all_loaded_modules.txt
@@ -193,30 +197,30 @@ GET_DISK(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing disks ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir DISKS && cd DISKS
 	echo "	  Collecting Disk tree, LVM, Disk Usage, Free Disks,  ..."
-	echo -e "-------------------------------------" >> Disk_info.txt
-	echo -e "List partition" >> Disk_info.txt
-	echo -e "-------------------------------------" >> Disk_info.txt
-	fdisk -l >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	cat /proc/partitions >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	echo -e "Disk filesystem" >> Disk_info.txt
-	echo -e "-------------------------------------" >> Disk_info.txt
-	df -h >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	echo -e "Mount list" >> Disk_info.txt
-	echo -e "-------------------------------------" >> Disk_info.txt
-	findmnt -a -A >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	echo -e "Display information about volume groups, logical volumes" >> Disk_info.txt
-	echo -e "-------------------------------------" >> Disk_info.txt
-	vgdisplay -v >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	lvdisplay -v >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	vgs --all >> "Disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Disk_info.txt
-	lvs --all >> "Disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	echo -e "List partition" >> disk_info.txt
+	echo -e "-------------------------------------" >> disk_info.txt
+	fdisk -l >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	cat /proc/partitions >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	echo -e "Disk filesystem" >> disk_info.txt
+	echo -e "-------------------------------------" >> disk_info.txt
+	df -h >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	echo -e "Mount list" >> disk_info.txt
+	echo -e "-------------------------------------" >> disk_info.txt
+	findmnt -a -A >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	echo -e "Display information about volume groups, logical volumes" >> disk_info.txt
+	echo -e "-------------------------------------" >> disk_info.txt
+	vgdisplay -v >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	lvdisplay -v >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	vgs --all >> "disk_info.txt" 2>> ../err
+	echo -e "-------------------------------------" >> disk_info.txt
+	lvs --all >> "disk_info.txt" 2>> ../err
 	free >> "free_mem.txt" 2>> ../err
 	echo "	  Collecting fstab  ..."
 	cat /etc/fstab >> "startup_mount_fstab.txt" 2>> ../err
@@ -295,18 +299,18 @@ GET_PROCESS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing process ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir PROCESS && cd PROCESS
 	echo "	  Collecting pstree, Information of running process  ..."
-	echo -e "-------------------------------------" >> Display_process.txt
-	echo -e "Pstree" >> Display_process.txt
-	echo -e "-------------------------------------" >> Display_process.txt
-	pstree >> "Display_process.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Display_process.txt
-	echo -e "PS FXAU" >> Display_process.txt
-	echo -e "-------------------------------------" >> Display_process.txt
-	ps faux >> "Display_process.txt" 2>> ../err
-	echo -e "-------------------------------------" >> Display_process.txt
-	echo -e "TOP" >> Display_process.txt
-	echo -e "-------------------------------------" >> Display_process.txt
-	top -H -b -n 1 >> "Display_process.txt" 2>> ../err
+	echo -e "-------------------------------------" >> display_process.txt
+	echo -e "Pstree" >> display_process.txt
+	echo -e "-------------------------------------" >> display_process.txt
+	pstree >> "display_process.txt" 2>> ../err
+	echo -e "-------------------------------------" >> display_process.txt
+	echo -e "PS FXAU" >> display_process.txt
+	echo -e "-------------------------------------" >> display_process.txt
+	ps faux >> "display_process.txt" 2>> ../err
+	echo -e "-------------------------------------" >> display_process.txt
+	echo -e "TOP" >> display_process.txt
+	echo -e "-------------------------------------" >> display_process.txt
+	top -H -b -n 1 >> "display_process.txt" 2>> ../err
 	echo "	  Collecting the process hashes..."
 	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
@@ -369,8 +373,8 @@ GET_OPENED_PORTS(){
 	
 	if which lsof &>/dev/null; then
 		echo "	  Collecting List open files..."
-  		lsof > "List_open_files.txt" 2>> ../err
-		lsof -i -n -P > "List_open_files_contain_ipv4.txt" 2>> ../err
+  		lsof > "list_open_files.txt" 2>> ../err
+		lsof -i -n -P > "list_open_files_contain_ipv4.txt" 2>> ../err
 	fi
 	
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: ports are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -417,20 +421,20 @@ GET_NETWORK_INFO(){
 	#Get iptables. iptables rules.
 	if which iptables &>/dev/null; then
 		echo "	  Collecting IPtables..."
-		iptables -L -n -v --line-numbers > "iptables_Full.txt" 2>> ../err
+		iptables -L -n -v --line-numbers > "iptables_full.txt" 2>> ../err
 		iptables -L > "iptables.txt" 2>> ../err
 	fi
 
 	#Get iptables. iptables rules.
 	if which iptables &>/dev/null; then
 		echo "	  Collecting IP6tables..."
-		ip6tables -L -n -v > "ip6tables_Full.txt" 2>> ../err
+		ip6tables -L -n -v > "ip6tables_full.txt" 2>> ../err
 	fi
 	
 	#Get UFW status
 	if which ufw &>/dev/null; then
 		echo "	  Collecting UFW status..."
-		ufw status verbose > "UFW_status.txt" 2>> ../err
+		ufw status verbose > "ufw_status.txt" 2>> ../err
 	fi
 	
 	#Get firewall-cmd information
@@ -445,9 +449,9 @@ GET_NETWORK_INFO(){
 	#Get SeLinux Verbose information
 	if which sestatus &>/dev/null; then
 		echo "	  Collecting SELinux status..."
-		sestatus -v > SELinux-selinux.txt 2>> ../err
+		sestatus -v > seLinux-selinux.txt 2>> ../err
 		echo "	  Collecting SELinux booleans..."
-		getsebool -a > SELinux-booleans.txt 2>> ../err
+		getsebool -a > seLinux-booleans.txt 2>> ../err
 	fi
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: NETWORK INFO are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -463,9 +467,9 @@ GET_TASKS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing tasks ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SCHEDULE_TASKS && cd SCHEDULE_TASKS
 	echo "	  Collecting Task Scheduler..."
-	(ls -la /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "ALL_cron.txt" 2>> ../err
-	(cat /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "ALL_cron.txt" 2>> ../err
-	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_User.txt" 2>> ../err
+	(ls -la /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "all_cron.txt" 2>> ../err
+	(cat /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "all_cron.txt" 2>> ../err
+	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_user.txt" 2>> ../err
 	(cat /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "systemd.txt" 2>> ../err
 	(cat /etc/rc*.d**/* /etc/rc.local*) > "rc.txt" 2>> ../err
 	echo "	  Collecting Shell Configuration..."
@@ -558,7 +562,7 @@ GET_FULL_LOGS(){
 	mkdir LOGS_FULL && cd LOGS_FULL
 	#Collect all files in in /var/log folder.
 	echo "	  Collecting FULL Logs folder..."
-	tar -czvf Full-var-log.tar.gz --dereference --hard-dereference --sparse /var/log > Full-var-log-list.txt 2>> ../err
+	tar -czvf full-var-log.tar.gz --dereference --hard-dereference --sparse /var/log > full-var-log-list.txt 2>> ../err
 		echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: FULL Logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -572,7 +576,7 @@ GET_WEBSERVERSCRIPTS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing web server scripts... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir WEBSERVERSCRIPTS && cd WEBSERVERSCRIPTS
 	echo "	  Collecting WEBSERVERSCRIPTS..."
-	find /var/www/ -type f \( -iname \*.py -o -iname \*.php -o -iname \*.js -o -iname \*.rb -o -iname \*.pl -o -iname \*.cgi -o -iname \*.sh -o -iname \*.go -o -iname \*.war -o -iname \*.config -o -iname \*.conf \) -print0 2>> ../err | xargs -0 tar -czvf WEBSERVERSCRIPTS.tar.gz > WEBSERVERSCRIPTS.txt 2>> ../err
+	find /var/www/ -type f \( -iname \*.py -o -iname \*.php -o -iname \*.js -o -iname \*.rb -o -iname \*.pl -o -iname \*.cgi -o -iname \*.sh -o -iname \*.go -o -iname \*.war -o -iname \*.config -o -iname \*.conf \) -print0 2>> ../err | xargs -0 tar -czvf webserverscripts.tar.gz > webserverscripts.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: web server scripts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -600,13 +604,13 @@ GET_SUSPICIOUS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing suspicious files... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SUSPICIOUS && cd SUSPICIOUS
 	echo "	  Collecting file excute in /tmp..."
-	awk -F',' '$1 ~ /^-.*x/ && $5 ~ /^\/tmp\// {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf File_Excuteable_TMP.tar.gz > "File_Excuteable_TMP.txt" 2>> ../err
+	awk -F',' '$1 ~ /^-.*x/ && $5 ~ /^\/tmp\// {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_excuteable_tmp.tar.gz > "file_excuteable_tmp.txt" 2>> ../err
 	echo "	  Collecting file hidden in /tmp..."
-	awk -F',' '$5 ~ /^\/tmp\/\..*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" 2>> ../err
+	awk -F',' '$5 ~ /^\/tmp\/\..*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_hidden_tmp.tar.gz > "file_hidden_tmp.txt" 2>> ../err
 	echo "	  Collecting sha256 in /tmp..."
  	awk -F',' '$5 ~ /^\/tmp/ && $1 ~ /^-.*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | xargs -I {} sha256sum {} > tmp_file_hash_results.txt 2>> ../err
-	echo "	  Collecting SUID-SGID File ..."
-	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf SUID-SGID.tar.gz > SUID-SGID-list.txt 2>> ../err
+	echo "	  Collecting suid-sgid File ..."
+	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf suid-sgid.tar.gz > suid-sgid-list.txt 2>> ../err
 	echo "	  File small less than 1kb..."
 	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
 	echo "	  Collecting .ssh folder..."
