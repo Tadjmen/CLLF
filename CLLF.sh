@@ -139,12 +139,9 @@ GET_SYSTEM_INFO(){
 	cat /proc/cpuinfo > "cpuinfo.txt" 2>> ../err
 	cat /proc/meminfo > "meminfo.txt" 2>> ../err
  	ls -lah /var/log/ > "var_log_directory_listing.txt" 2>> ../err
-	echo -e "printenv" >> environment_variables.txt
-	echo -e "-------------------------------------" >> environment_variables.txt
-	printenv >> "environment_variables.txt" 2>> ../err
-	echo -e "-------------------------------------" >> environment_variables.txt
-	echo -e "set" >> environment_variables.txt
-	set > "environment_variables.txt" 2>> ../err
+	printenv >> "printenv.txt"
+	set >> "set.txt" 2>> ../err
+	echo $PATH >> "path.txt" 2>> ../err
 	#This saves loaded modules
 	echo -e "lsmod > "all_loaded_modules.txt"" >> all_loaded_modules.txt
 	echo -e "-------------------------------------" >> all_loaded_modules.txt
