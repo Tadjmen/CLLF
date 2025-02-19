@@ -611,7 +611,8 @@ GET_SUSPICIOUS(){
 	echo "	  File small less than 1kb..."
 	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller_files_1kb.tar.gz > smaller_files_1kb.txt 2>> ../err
 	echo "	  File greater than 10 MegaBytes..."
-	awk -F',' '$1 !~ /^d/ && $4 > 10000000 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err > greater_than_10_mb.txt 2>> ../err
+	echo "Permission,uOwner,gOwner,Size,File Path,Create Time,Access Time,Modify Time" > greater_than_10_mb.csv 2>> ../err
+	awk -F',' '$1 !~ /^d/ && $4 > 10000000' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err >> greater_than_10_mb.csv 2>> ../err
 
 	echo "	  Collecting .ssh folder..."
 	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh_folders.tar.gz > ssh_folders_list.txt 2>> ../err
