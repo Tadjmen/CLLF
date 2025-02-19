@@ -45,9 +45,9 @@ NETWORK_SUSPICIUS(){
 	echo -e "+---------------------------------------------------------------------------+"
 	mkdir NETWORK_SUSPICIUS && cd NETWORK_SUSPICIUS
 	echo "	  Collecting netstat with PID ..."
-	netstat -plntu > "netstat_with_PID.txt" 2>> ../err
+	netstat -plntu > "netstat_with_pid.txt" 2>> ../err
 	echo "	  Collecting LSOF with IPV4 ..."
-	lsof -i -n -P > "List_open_files_contain_ipv4.txt" 2>> ../err
+	lsof -i -n -P > "list_open_files_contain_ipv4.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: NETWORK_SUSPICIUS are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
@@ -63,13 +63,13 @@ PROCESS_SUSPICIUS(){
 	echo -e "+---------------------------------------------------------------------------+"
 	mkdir PROCESS_SUSPICIUS && cd PROCESS_SUSPICIUS
  	echo "	  Collecting root process high PID..."
-	ps -xau | awk '$1=="root" && $2 > 1000' > "Root_process_high_PID.txt" 2>> ../err
+	ps -xau | awk '$1=="root" && $2 > 1000' > "root_process_high_pid.txt" 2>> ../err
 	echo "	  Collecting deleted still running ..."
-	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "Process_deleted_but_running.txt" 2>> ../err
+	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "process_deleted_but_running.txt" 2>> ../err
 	echo "	  Collecting Real Process running path ..."
-	ls -al /proc/*/exe 2> /dev/null |  grep "\->" > "Real_process_running_path.txt" 2>> ../err
+	ls -al /proc/*/exe 2> /dev/null |  grep "\->" > "real_process_running_path.txt" 2>> ../err
 	echo "	  Collecting Process running with suspicious CWD ..."
-	ls -al /proc/*/cwd 2> /dev/null | grep "\->" | grep "/home/\|/temp\|/dev/shm\|/var/run|/run\|/var/spool" > "Process_running_with_suspicious_CWD.txt" 2>> ../err
+	ls -al /proc/*/cwd 2> /dev/null | grep "\->" | grep "/home/\|/temp\|/dev/shm\|/var/run|/run\|/var/spool" > "process_running_with_suspicious_cwd.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: PROCESS_SUSPICIUS are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
@@ -89,13 +89,13 @@ FILES_SUSPICIUS(){
 	#echo "	  Collecting decentralized File and DIR..."
 	#find / \( -nouser -o -nogroup \) -exec ls -lg {} \; > "decentralized_file_dir.txt" 2>> ../err
 	echo "	  Collecting list File ELF in TMP..."
-	find /tmp -type f -exec file -p '{}' \; | grep ELF > "ELF_file_in_TMP.txt" 2>> ../err
+	find /tmp -type f -exec file -p '{}' \; | grep ELF > "elf_file_in_tmp.txt" 2>> ../err
 	echo "	  Collecting list File hide in TMP..."
-	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf File_hidden_TMP.tar.gz > "File_hidden_TMP.txt" 2>> ../err
+	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf file_hidden_tmp.tar.gz > "file_hidden_tmp.txt" 2>> ../err
 	echo "	  Collecting list File hide in TMP (hash)..."
  	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting SUSPICIOUS File ..."
-	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf File_Excuteable_TMP.tar.gz > "File_Excuteable_TMP.txt" 2>> ../err
+	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf file_excuteable_tmp.tar.gz > "file_excuteable_tmp.txt" 2>> ../err
 	echo "	  Collecting file modify last 1 DAY..."
 	find /home/ /etc/ -type d -name .cache -prune -o -type f -mtime -1 -print  > "last_1_day_file_modify.txt" 2>> ../err
 	echo "	  Collecting file ELF in Log..."
@@ -159,10 +159,10 @@ VIEW_NETWORK_SUSPICIUS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " VIEWING.. NETWORK_SUSPICIUS... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	cd NETWORK_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. LSOF with IP ...${NORMAL}"
-	cat "List_open_files_contain_ipv4.txt" | more 2>&1
+	cat "list_open_files_contain_ipv4.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. netstat with PID ...${NORMAL}"
-	cat "netstat_with_PID.txt" | more 2>&1
+	cat "netstat_with_pid.txt" | more 2>&1
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
@@ -179,16 +179,16 @@ VIEW_PROCESS_SUSPICIUS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " VIEWING.. PROCESS_SUSPICIUS ... ${BK}${NORMAL} "
 	cd PROCESS_SUSPICIUS
 	echo -e "	  ${YELLOW}Viewing.. root process high PID...${NORMAL}"
-	cat "Root_process_high_PID.txt" | more 2>&1
+	cat "root_process_high_pid.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. deleted still running ...${NORMAL}"
-	cat "Process_deleted_but_running.txt" | more 2>&1
+	cat "process_deleted_but_running.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Real Process running path ...${NORMAL}"
-	cat "Real_process_running_path.txt" | more 2>&1
+	cat "real_process_running_path.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Process running with suspicious CWD ...${NORMAL}"
-	cat "Process_running_with_suspicious_CWD.txt" | more 2>&1
+	cat "process_running_with_suspicious_cwd.txt" | more 2>&1
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "${GREEN} Done!${NORMAL}"
 	echo -e "+---------------------------------------------------------------------------+"
@@ -211,16 +211,16 @@ VIEW_FILES_SUSPICIUS(){
 	#cat "decentralized_file_dir.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list File ELF in TMP...${NORMAL}"
-	cat "ELF_file_in_TMP.txt" | more 2>&1
+	cat "elf_file_in_tmp.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list File hide in TMP...${NORMAL}"
-	cat "File_hidden_TMP.txt" | more 2>&1
+	cat "file_hidden_tmp.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. list File hide in TMP (hash)...${NORMAL}"
  	cat "tmp_file_hash_results.txt" | more 2>&1
  	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. SUSPICIOUS File ...${NORMAL}"
-	cat "File_Excuteable_TMP.txt" | more 2>&1
+	cat "file_excuteable_tmp.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. file modify last 1 DAY...${NORMAL}"
 	cat "last_1_day_file_modify.txt" | more 2>&1
