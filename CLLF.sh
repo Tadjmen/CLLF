@@ -309,19 +309,19 @@ GET_PROCESS(){
 	echo -e "-------------------------------------" >> display_process.txt
 	top -H -b -n 1 >> "display_process.txt" 2>> ../err
 	echo "	  Collecting the process hashes..."
-	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running-processhashes.txt 2>> ../err
+	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running_processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
-	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > Running-process-exe-links.txt 2>> ../err
+	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > Running_process_exe_links.txt 2>> ../err
  	echo "	  Collecting the process environment..."
-	find /proc/[0-9]*/environ | xargs head 2>/dev/null > Running-process-environ.txt 2>> ../err
+	find /proc/[0-9]*/environ | xargs head 2>/dev/null > Running_process_environ.txt 2>> ../err
   	echo "	  Collecting the process CWD..."
-	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > Running-process-cwd.txt 2>> ../err
+	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > Running_process_cwd.txt 2>> ../err
 	echo "	  Collecting the process cmdline..."
-	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > Running-process-cmdline.txt 2>> ../err
+	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > Running_process_cmdline.txt 2>> ../err
  	echo "	  Collecting the process comm..."
-	find /proc/[0-9]*/comm | xargs head 2>/dev/null > Running-process-comm.txt 2>> ../err
+	find /proc/[0-9]*/comm | xargs head 2>/dev/null > Running_process_comm.txt 2>> ../err
 	echo "	  Collecting Run-time variable data..."
-	ls -latr /var/run 2>/dev/null > TEMP-VAR_RUN.txt 2>> ../err
+	ls -latr /var/run 2>/dev/null > TEMP_VAR_RUN.txt 2>> ../err
 	ls -latr /run 2>/dev/null > TEMP-RUN.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Process are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
@@ -471,12 +471,12 @@ GET_TASKS(){
 	(cat /etc/rc*.d**/* /etc/rc.local*) > "rc.txt" 2>> ../err
 	echo "	  Collecting Shell Configuration..."
 	(cat /etc/*.bashrc) > "bashrc-config.txt" 2>> ../err
-	(cat /etc/profile /etc/profile.d/* ) > "profile-config.txt" 2>> ../err
+	(cat /etc/profile /etc/profile.d/* ) > "profile_config.txt" 2>> ../err
 	(cat ~/.bash_profile ~/.bash_login ~/.profile ) > "found_first_to_executed.txt" 2>> ../err
 	echo "	  Collecting timers list..."
-   	systemctl list-timers --all > "list-timers.txt" 2>> ../err
+   	systemctl list-timers --all > "list_timers.txt" 2>> ../err
 	echo "	  Collecting XDG Autostart..."
-	cat /home/*/.config/autostart/* > "xdg-autostart.txt" 2>> ../err
+	cat /home/*/.config/autostart/* > "xdg_autostart.txt" 2>> ../err
 	echo "	  Collecting MOTD ..."
 	cat /etc/update-motd.d/* > "motd.txt" 2>> ../err
 	echo "	  Collecting APT config ..."
@@ -497,11 +497,11 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden File and DIR /..."
- 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '/\.[^/]*' > all-hidden-file-folder.csv 2>> ../err
+ 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '/\.[^/]*' > all_hidden_file_folder.csv 2>> ../err
 	echo "	  Collecting hidden File and DIR in HOME folder ..."
-	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '^/home/|^/root/' > hidden-file-folder-in-home.csv 2>> ../err
+	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '^/home/|^/root/' > hidden_file_folder_in_home.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
-	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden-file-folder-in-home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden-file-folder-in-home.tar.gz > /dev/null 2>&1
+	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden_file_folder_in_home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden_file_folder_in_home.tar.gz > /dev/null 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -559,7 +559,7 @@ GET_FULL_LOGS(){
 	mkdir LOGS_FULL && cd LOGS_FULL
 	#Collect all files in in /var/log folder.
 	echo "	  Collecting FULL Logs folder..."
-	tar -czvf full-var-log.tar.gz --dereference --hard-dereference --sparse /var/log > full-var-log-list.txt 2>> ../err
+	tar -czvf full_var_log.tar.gz --dereference --hard-dereference --sparse /var/log > full_var_log_list.txt 2>> ../err
 		echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: FULL Logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -607,11 +607,14 @@ GET_SUSPICIOUS(){
 	echo "	  Collecting sha256 in /tmp..."
  	awk -F',' '$5 ~ /^\/tmp/ && $1 ~ /^-.*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | xargs -I {} sha256sum {} > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting suid-sgid File ..."
-	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf suid-sgid.tar.gz > suid-sgid-list.txt 2>> ../err
+	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf suid_sgid.tar.gz > suid_sgid_list.txt 2>> ../err
 	echo "	  File small less than 1kb..."
-	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller-files-1kb.tar.gz > smaller-files-1kb.txt 2>> ../err
+	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller_files_1kb.tar.gz > smaller_files_1kb.txt 2>> ../err
+	echo "	  File greater than 10 MegaBytes..."
+	awk -F',' '$1 !~ /^d/ && $4 > 10000000 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err > greater_than_10_mb.txt 2>> ../err
+
 	echo "	  Collecting .ssh folder..."
-	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh-folders.tar.gz > ssh-folders-list.txt 2>> ../err
+	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh_folders.tar.gz > ssh_folders_list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
