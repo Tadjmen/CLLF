@@ -66,10 +66,8 @@ PROCESS_SUSPICIUS(){
 	ps -xau | awk '$1=="root" && $2 > 1000' > "root_process_high_pid.txt" 2>> ../err
 	echo "	  Collecting deleted still running ..."
 	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "process_deleted_but_running.txt" 2>> ../err
-	echo "	  Collecting Real Process running path ..."
-	ls -al /proc/*/exe 2> /dev/null |  grep "\->" > "real_process_running_path.txt" 2>> ../err
 	echo "	  Collecting Process running with suspicious CWD ..."
-	ls -al /proc/*/cwd 2> /dev/null | grep "\->" | grep "/home/\|/temp\|/dev/shm\|/var/run|/run\|/var/spool" > "process_running_with_suspicious_cwd.txt" 2>> ../err
+	ls -al /proc/*/cwd 2> /dev/null | grep "\->" | grep -E "\/tmp\/|\/var\/tmp\/|\/home\/|\/temp|\/dev\/shm|\/var\/run|\/run|\/var\/spool" > "process_running_with_suspicious_cwd.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: PROCESS_SUSPICIUS are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
 }
