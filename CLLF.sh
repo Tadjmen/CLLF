@@ -309,17 +309,17 @@ GET_PROCESS(){
 	echo -e "-------------------------------------" >> display_process.txt
 	top -H -b -n 1 >> "display_process.txt" 2>> ../err
 	echo "	  Collecting the process hashes..."
-	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > Running_processhashes.txt 2>> ../err
+	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > running_processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
-	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > Running_process_exe_links.txt 2>> ../err
+	find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > running_process_exe_links.txt 2>> ../err
  	echo "	  Collecting the process environment..."
-	find /proc/[0-9]*/environ | xargs head 2>/dev/null > Running_process_environ.txt 2>> ../err
+	find /proc/[0-9]*/environ | xargs head 2>/dev/null > running_process_environ.txt 2>> ../err
   	echo "	  Collecting the process CWD..."
-	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > Running_process_cwd.txt 2>> ../err
+	find /proc/[0-9]*/cwd | xargs head 2>/dev/null > running_process_cwd.txt 2>> ../err
 	echo "	  Collecting the process cmdline..."
-	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > Running_process_cmdline.txt 2>> ../err
+	find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > running_process_cmdline.txt 2>> ../err
  	echo "	  Collecting the process comm..."
-	find /proc/[0-9]*/comm | xargs head 2>/dev/null > Running_process_comm.txt 2>> ../err
+	find /proc/[0-9]*/comm | xargs head 2>/dev/null > running_process_comm.txt 2>> ../err
 	echo "	  Collecting Run-time variable data..."
 	ls -latr /var/run 2>/dev/null > TEMP_VAR_RUN.txt 2>> ../err
 	ls -latr /run 2>/dev/null > TEMP-RUN.txt 2>> ../err
@@ -366,7 +366,7 @@ GET_OPENED_PORTS(){
 	ss --all > "ss_all.txt" 2>> ../err
 	ss -lntu > "ss_lntu.txt" 2>> ../err
 	netstat -a > "netstat_a.txt" 2>> ../err
-	netstat -plntu > "netstat_with_PID.txt" 2>> ../err
+	netstat -plntu > "netstat_with_pid.txt" 2>> ../err
 	
 	if which lsof &>/dev/null; then
 		echo "	  Collecting List open files..."
@@ -410,9 +410,9 @@ GET_NETWORK_INFO(){
 	echo "	  Collecting Routing Table..."
 	
 	if ip route &>/dev/null; then
-		ip route > Network-routetable.txt 2>> ../err
+		ip route > network-routetable.txt 2>> ../err
 	else
-		netstat -rn > Network-routetable.txt 2>> ../err
+		netstat -rn > network-routetable.txt 2>> ../err
 	fi
 		
 	#Get iptables. iptables rules.
