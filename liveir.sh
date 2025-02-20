@@ -26,7 +26,7 @@ BANNER(){
  |___/_/|_/_/    /_/   /___/_/|_|    /_/ /_//_/  
 
 ${NORMAL}"
-	echo -e "[${YELLOW}liveIR.sh${NORMAL} - VNPT IR-TH] == A Modular of (${BK}CLLF${NORMAL})"
+	echo -e "[${YELLOW}liveir.sh${NORMAL} - VNPT IR-TH] == A Modular of (${BK}CLLF${NORMAL})"
 }
 
 
@@ -34,6 +34,12 @@ OUTDIR=Logs_LIVEHUNT_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H
 mkdir $OUTDIR && cd $OUTDIR
 touch err
 
+#Network - Suspicious network activity.
+#Processes – Suspicious processes running.
+#Directories – Suspicious directories holding malicious payloads, data, or tools to allow lateral movement into a network.
+#Files – Files that are malicious, likely tampered with, or otherwise out of place on a Linux host.
+#Users – Areas to check for suspicious user activity.
+#Logs – Log file tampering detection and common areas to check for signs someone has been covering their tracks.
 
 #@> NETWORK SUSPICIUS
 NETWORK_SUSPICIUS(){
@@ -86,6 +92,8 @@ FILES_SUSPICIUS(){
 	#lsattr / -R 2> /dev/null | grep "\----i" > "immutable_files_and_directories.txt" 2>> ../err
 	#echo "	  Collecting decentralized File and DIR..."
 	#find / \( -nouser -o -nogroup \) -exec ls -lg {} \; > "decentralized_file_dir.txt" 2>> ../err
+	echo "	  Collecting history file location unusual..."
+	lsof +L1  > "accessing_file_unlinked.txt" 2>> ../err
 	echo "	  Collecting list File ELF in TMP..."
 	find /tmp -type f -exec file -p '{}' \; | grep ELF > "elf_file_in_tmp.txt" 2>> ../err
 	echo "	  Collecting list File hide in TMP..."
@@ -295,7 +303,7 @@ RUN(){
 	USER_SUSPICIUS
 	PERSISTENT_SUSPICIOUS
 
-	if [[ $check_liveIR == true ]]; then
+	if [[ $check_liveir == true ]]; then
 		VIEW_NETWORK_SUSPICIUS
 		VIEW_PROCESS_SUSPICIUS
 		VIEW_FILES_SUSPICIUS

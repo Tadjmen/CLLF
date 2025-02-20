@@ -80,7 +80,7 @@ while [ -n "$1" ]; do
 				shift ;;
 			-a|--auto)
 				auto=true
-				check_liveIR=false
+				check_liveir=false
 				shift ;;
 			-h|--help)
 				PRINTUSAGE
@@ -682,9 +682,7 @@ RUN(){
 			fi
 		fi
 	fi
-	if $run_liveIR; then
-		/bin/bash "$BASEDIR/liveIR.sh"; sleep 5
-	fi
+
 	GET_SYSTEM_INFO; sleep 5
 	if $get_logs_confirm; then
 		GET_FULL_LOGS
@@ -709,7 +707,9 @@ RUN(){
 	GET_HISTORIES; sleep 5
 	GET_SUSPICIOUS; sleep 5
 	GET_SYS_LOGS; sleep 5
-}
+	if $run_liveir; then
+		/bin/bash "$BASEDIR/liveir.sh"; sleep 5
+	fi}
 
 
 while true
