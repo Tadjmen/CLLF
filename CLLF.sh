@@ -472,7 +472,13 @@ GET_TASKS(){
 	echo "	  Collecting Shell Configuration..."
 	(cat /etc/*.bashrc) > "bashrc-config.txt" 2>> ../err
 	(cat /etc/profile /etc/profile.d/* ) > "profile_config.txt" 2>> ../err
-	(cat ~/.bash_profile ~/.bash_login ~/.profile ) > "found_first_to_executed.txt" 2>> ../err
+	(cat /home/*/.bash_profile /home/*/.bash_login /home/*/.profile /root/.bash_profile /root/.bash_login /root/.profile) > "found_first_to_executed.txt" 2>> ../err
+	echo "	  Collecting loginscript..."
+	(ls -la /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) > "home_loginscript.txt" 2>> ../err
+	(cat /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) >> "home_loginscript.txt" 2>> ../err
+	echo "	  Collecting logoutscript..."
+	(ls -la /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) > "home_logoutscript.txt" 2>> ../err
+	(cat /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) >> "home_logoutscript.txt" 2>> ../err
 	echo "	  Collecting timers list..."
    	systemctl list-timers --all > "list_timers.txt" 2>> ../err
 	echo "	  Collecting XDG Autostart..."
