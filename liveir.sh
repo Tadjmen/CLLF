@@ -70,9 +70,11 @@ PROCESS_SUSPICIUS(){
 	mkdir PROCESS_SUSPICIUS && cd PROCESS_SUSPICIUS
  	echo "	  Collecting root process high PID..."
 	ps -xau | awk '$1=="root" && $2 > 1000' > "root_process_high_pid.txt" 2>> ../err
-	echo "	  Collecting deleted still running ..."
+	echo "	  Collecting deleted process but still running ..."
 	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "process_deleted_but_running.txt" 2>> ../err
-	echo "	  Collecting Process running with suspicious CWD ..."
+	echo "	  Collecting suspicius process location excuteable file ..."
+	ls -alR /proc/*/exe 2> /dev/null | grep -E "\/tmp\/|\/var\/tmp\/|\/home\/|\/temp|\/dev\/shm|\/var\/run|\/run|\/var\/spool" > "process_running_with_suspicious_exe.txt" 2>> ../err
+	echo "	  Collecting suspicius process running with  CWD ..."
 	ls -al /proc/*/cwd 2> /dev/null | grep "\->" | grep -E "\/tmp\/|\/var\/tmp\/|\/home\/|\/temp|\/dev\/shm|\/var\/run|\/run|\/var\/spool" > "process_running_with_suspicious_cwd.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: PROCESS_SUSPICIUS are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
@@ -92,7 +94,7 @@ FILES_SUSPICIUS(){
 	#lsattr / -R 2> /dev/null | grep "\----i" > "immutable_files_and_directories.txt" 2>> ../err
 	#echo "	  Collecting decentralized File and DIR..."
 	#find / \( -nouser -o -nogroup \) -exec ls -lg {} \; > "decentralized_file_dir.txt" 2>> ../err
-	echo "	  Collecting history file location unusual..."
+	echo "	  Collecting accessing file unlinked..."
 	lsof +L1  > "accessing_file_unlinked.txt" 2>> ../err
 	echo "	  Collecting list File ELF in TMP..."
 	find /tmp -type f -exec file -p '{}' \; | grep ELF > "elf_file_in_tmp.txt" 2>> ../err
@@ -106,9 +108,8 @@ FILES_SUSPICIUS(){
 	find /home/ /etc/ -type d -name .cache -prune -o -type f -mtime -1 -print  > "last_1_day_file_modify.txt" 2>> ../err
 	echo "	  Collecting file ELF in Log..."
 	grep [[:cntrl:]] /var/log/*.log > "elf_in_log.txt" 2>> ../err
-	echo "	  Collecting accessing file unlinked..."
-	lsof +L1  > "accessing_file_unlinked.txt" 2>> ../err
-
+	echo "	  Collecting suspicius history..."
+	cat "$OUTDIR/SYSTEM_INFO/metadata-accesstimes.csv" || grep "_history" | cut -d',' -f5 | grep -vE "\/home\/.*\/|\/root\/" 2>> ../err > "suspicius_history.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: web server scripts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }

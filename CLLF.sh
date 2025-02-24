@@ -707,9 +707,12 @@ RUN(){
 	GET_HISTORIES; sleep 5
 	GET_SUSPICIOUS; sleep 5
 	GET_SYS_LOGS; sleep 5
+
+	export OUTDIR #export OUTDIR, can use in liveir
 	if $run_liveir; then
 		/bin/bash "$BASEDIR/liveir.sh"; sleep 5
-	fi}
+	fi
+}
 
 
 while true
