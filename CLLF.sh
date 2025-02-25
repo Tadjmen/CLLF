@@ -108,33 +108,10 @@ GET_SYSTEM_INFO(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing SYSTEM_INFO... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SYSTEM_INFO && cd SYSTEM_INFO
 	echo "	  Collecting Basic Info..."
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "whoami" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
-	whoami >> "systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "uptime" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
-	uptime >> "systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "ipconfig" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
-	ip a >> "systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "hostname" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
-	hostname >> "systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "uname -a" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
-	uname -a >> "systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "OS release" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
-	cat /etc/os-release >> "systeminfo.txt" 2>> ../err
-	echo -e "-------------------------------------" >> systeminfo.txt
-	echo -e "Linux release" >> systeminfo.txt
-	echo -e "-------------------------------------" >> systeminfo.txt
+	for cmd in "whoami" "uptime" "ip a" "hostname" "uname -a" "cat /etc/os-release"; do
+	    echo -e "\n========== $cmd ==========" >> systeminfo.txt
+	    $cmd >> systeminfo.txt 2>/dev/null
+	done
 	cat /proc/version> "version.txt" 2>> ../err
 	cat /proc/cpuinfo > "cpuinfo.txt" 2>> ../err
 	cat /proc/meminfo > "meminfo.txt" 2>> ../err
@@ -142,18 +119,23 @@ GET_SYSTEM_INFO(){
 	printenv >> "printenv.txt" 2>> ../err
 	set >> "set.txt" 2>> ../err
 	echo $PATH >> "path.txt" 2>> ../err
+	echo "	  Collecting all alias..."
+	alias | grep '=' > all_alias.txt 2>> ../err
+
 	#This saves loaded modules
-	echo -e "lsmod > "all_loaded_modules.txt"" >> all_loaded_modules.txt
-	echo -e "-------------------------------------" >> all_loaded_modules.txt
-	lsmod > "all_loaded_modules.txt" 2>> ../err
-	echo -e "-------------------------------------" >> all_loaded_modules.txt
-	echo -e "cat /proc/modules" >> all_loaded_modules.txt
-	echo -e "-------------------------------------" >> all_loaded_modules.txt
-	cat /proc/modules >> "all_loaded_modules.txt" 2>> ../err
+	for cmd in "lsmod" "cat /proc/modules"; do
+	    echo -e "\n========== $cmd ==========" >> all_loaded_modules.txt
+	    $cmd >> all_loaded_modules.txt 2>> ../err
+	done
 	echo "	  Collecting modules info..."
 	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do echo -e "\nModule: $i"; modinfo $i ; done > modules_info.txt 2>> ../err
 	echo "	  Collecting hash loaded modules..."
 	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do modinfo $i | grep "filename:" | awk '{print $2}' | xargs -I{} sha1sum {} ; done > modules_sha1.txt 2>> ../err
+	find /lib/modules/$(uname -r)/kernel -name '*.ko*' | while read -r module; do
+	    if ! modinfo "$module" | grep -q 'signature:'; then
+	        echo "Unsigned kernel module: $module" > unsigned_modules.txt 2>> ../err
+	    fi
+	done
 	echo "	  Collecting mount..."
 	mount > mount.txt 2>> ../err
 	
@@ -193,31 +175,13 @@ GET_DISK(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing disks ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir DISKS && cd DISKS
-	echo "	  Collecting Disk tree, LVM, Disk Usage, Free Disks,  ..."
-	echo -e "-------------------------------------" >> disk_info.txt
-	echo -e "List partition" >> disk_info.txt
-	echo -e "-------------------------------------" >> disk_info.txt
-	fdisk -l >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	cat /proc/partitions >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	echo -e "Disk filesystem" >> disk_info.txt
-	echo -e "-------------------------------------" >> disk_info.txt
-	df -h >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	echo -e "Mount list" >> disk_info.txt
-	echo -e "-------------------------------------" >> disk_info.txt
-	findmnt -a -A >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	echo -e "Display information about volume groups, logical volumes" >> disk_info.txt
-	echo -e "-------------------------------------" >> disk_info.txt
-	vgdisplay -v >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	lvdisplay -v >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	vgs --all >> "disk_info.txt" 2>> ../err
-	echo -e "-------------------------------------" >> disk_info.txt
-	lvs --all >> "disk_info.txt" 2>> ../err
+	echo "	  List disk, partition info..."
+	for cmd in "fdisk -l" "cat /proc/partitions" "df -h" "findmnt -a -A" \
+	           "vgdisplay -v" "lvdisplay -v" "vgs --all" "lvs --all"; do
+	    echo -e "\n========== $cmd ==========" >> disk_info.txt
+	    $cmd >> disk_info.txt 2>> ../err
+	done
+	echo "	  Collecting mem status  ..."
 	free >> "free_mem.txt" 2>> ../err
 	echo "	  Collecting fstab  ..."
 	cat /etc/fstab >> "startup_mount_fstab.txt" 2>> ../err
@@ -296,18 +260,10 @@ GET_PROCESS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing process ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir PROCESS && cd PROCESS
 	echo "	  Collecting pstree, Information of running process  ..."
-	echo -e "-------------------------------------" >> display_process.txt
-	echo -e "Pstree" >> display_process.txt
-	echo -e "-------------------------------------" >> display_process.txt
-	pstree >> "display_process.txt" 2>> ../err
-	echo -e "-------------------------------------" >> display_process.txt
-	echo -e "PS FXAU" >> display_process.txt
-	echo -e "-------------------------------------" >> display_process.txt
-	ps faux >> "display_process.txt" 2>> ../err
-	echo -e "-------------------------------------" >> display_process.txt
-	echo -e "TOP" >> display_process.txt
-	echo -e "-------------------------------------" >> display_process.txt
-	top -H -b -n 1 >> "display_process.txt" 2>> ../err
+	for cmd in "pstree" "ps faux" "top -H -b -n 1"; do
+	    echo -e "\n===== $cmd =====" >> display_process.txt
+	    $cmd >> display_process.txt 2>> ../err
+	done
 	echo "	  Collecting the process hashes..."
 	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > running_processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."
@@ -335,9 +291,12 @@ GET_SERVICES(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing services ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SERVICES && cd SERVICES
-	echo "	  Collecting Information of running services..."
+	echo "	  Collecting name of running services..."
 	systemctl list-units --all > "systemctl_list_units.txt" 2>> ../err
-	(ls -la /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "ls_systemd_system.txt" 2>> ../err
+	echo "	  Collecting detail of all services..."
+	for file in /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service /lib/systemd/system/*; do
+	    [ -f "$file" ] && echo -e "\n========== $file ==========\n" && cat "$file"
+	done > "systemd.txt" 2>> ../err
 	echo "	  Collecting status ALL services..."
 	service --status-all > "service_status_all.txt" 2>> ../err
 	
@@ -349,7 +308,6 @@ GET_SERVICES(){
 	systemctl --type=service --state=failed > "systemctl_services_failed.txt" 2>> ../err
 	systemctl --type=service --state=active > "systemctl_services_active.txt" 2>> ../err
 	systemctl --type=service --state=running > "systemctl_services_running.txt" 2>> ../err
-	ls -l /etc/init.d/* > "ls_etc_initd.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: services are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -463,12 +421,26 @@ GET_TASKS(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing tasks ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SCHEDULE_TASKS && cd SCHEDULE_TASKS
-	echo "	  Collecting Task Scheduler..."
-	(ls -la /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "all_cron.txt" 2>> ../err
-	(cat /etc/*cron**/* /etc/cron* /var/spool/**/cron*) >> "all_cron.txt" 2>> ../err
+	echo "	  Collecting all crontab location..."
+	for file in /etc/*cron**/* /etc/cron* /var/spool/**/cron*; do
+	    [ -f "$file" ] && echo -e "\n========== $file ==========\n" && cat "$file"
+	done >> "all_cron.txt" 2>> ../err
+	echo "	  Collecting crontab per user..."
 	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_user.txt" 2>> ../err
-	(cat /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service) > "systemd.txt" 2>> ../err
-	(cat /etc/rc*.d**/* /etc/rc.local*) > "rc.txt" 2>> ../err
+
+
+
+
+	echo "	  Collecting user boot..."
+	for file in /{root,home/*}/.{bashrc,bash_profile,bash_logout,profile,zshrc,zprofile,zlogout,shrc,cshrc,tcshrc,kshrc,mkshrc}; do
+	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
+	done > "shell_config_user_boot.txt" 2>> ../err
+	echo "	  Collecting system boot..."
+	for file in /etc/{profile,bash.bashrc,zsh/zshrc,zsh/zprofile,zsh/zlogin,zsh/zlogout,profile.d/*,rc.local*,init.d/*}; do
+	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
+	done > "shell_config_system_boot.txt" 2>> ../err
+
+
 	echo "	  Collecting Shell Configuration..."
 	(cat /etc/*.bashrc) > "bashrc-config.txt" 2>> ../err
 	(cat /etc/profile /etc/profile.d/* ) > "profile_config.txt" 2>> ../err
@@ -479,6 +451,11 @@ GET_TASKS(){
 	echo "	  Collecting logoutscript..."
 	(ls -la /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) > "home_logoutscript.txt" 2>> ../err
 	(cat /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) >> "home_logoutscript.txt" 2>> ../err
+
+
+
+
+
 	echo "	  Collecting timers list..."
    	systemctl list-timers --all > "list_timers.txt" 2>> ../err
 	echo "	  Collecting XDG Autostart..."
