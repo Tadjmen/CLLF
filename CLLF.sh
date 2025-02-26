@@ -237,8 +237,7 @@ GET_ACCOUNT(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing users and groups ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir ACCOUNTS && cd ACCOUNTS
 	echo "	  Collecting passwd, shadow, group  ..."
-	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -vE '(nologin|halt|false|shutdown|sync)' | sort > "etc_passwd_login.txt" 2>> ../err
-	cat /etc/passwd | cut -d: -f1,3,4,5,6,7 | grep -E '(nologin|halt|false|shutdown|sync)' | sort > "etc_passwd_nologin.txt" 2>> ../err
+	cat /etc/passwd > "etc_passwd.txt" 2>> ../err
 	cat /etc/sudoers > "etc_sudoers.txt" 2>> ../err
 	cat /etc/group > "etc_group.txt" 2>> ../err
 	cat /etc/shadow > "etc_shadow.txt" 2>> ../err
