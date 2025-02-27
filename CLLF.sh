@@ -238,7 +238,7 @@ GET_ACCOUNT(){
 	mkdir ACCOUNTS && cd ACCOUNTS
 	echo "	  Collecting passwd, shadow, group  ..."
 	cat /etc/passwd > "etc_passwd.txt" 2>> ../err
-	cat /etc/sudoers > "etc_sudoers.txt" 2>> ../err
+	cat /etc/sudoers.d/* /etc/sudoers > "etc_sudoers.txt" 2>> ../err
 	cat /etc/group > "etc_group.txt" 2>> ../err
 	cat /etc/shadow > "etc_shadow.txt" 2>> ../err
 	cat /etc/gshadow > "etc_gshadow.txt" 2>> ../err
@@ -514,7 +514,7 @@ GET_SYS_LOGS(){
 	last -Faixw > "last.txt" 2>> ../err
 	journalctl -x > "journalctl_x.txt" 2>> ../err
 	journalctl -k > "journalctl_k.txt" 2>> ../err
-	cat /var/log/**audit** 2>> ../err | more > "auditd.txt" 2>> ../err
+	cat /var/log/audit/** 2>> ../err | more > "auditd.txt" 2>> ../err
 	cat /var/log/boot** 2>> ../err | more > "boot.txt" 2>> ../err
 	utmpdump /var/log/btmp** 2>> ../err | more > "invalid_login_attempts.txt" 2>> ../err
 	utmpdump /var/log/wtmp** 2>> ../err | more > "login_logout_activity.txt" 2>> ../err
