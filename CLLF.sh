@@ -427,33 +427,14 @@ GET_TASKS(){
 	echo "	  Collecting crontab per user..."
 	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_user.txt" 2>> ../err
 
-
-
-
 	echo "	  Collecting user boot..."
-	for file in /{root,home/*}/.{bashrc,bash_profile,bash_logout,profile,zshrc,zprofile,zlogout,shrc,cshrc,tcshrc,kshrc,mkshrc}; do
+	for file in /{root,home/*}/.{bashrc,bash_profile,bash_login,bash_logout,profile,zshrc,zprofile,zlogout,shrc,cshrc,tcshrc,kshrc,mkshrc}; do
 	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
 	done > "shell_config_user_boot.txt" 2>> ../err
 	echo "	  Collecting system boot..."
 	for file in /etc/{profile,bash.bashrc,zsh/zshrc,zsh/zprofile,zsh/zlogin,zsh/zlogout,profile.d/*,rc.local*,init.d/*}; do
 	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
 	done > "shell_config_system_boot.txt" 2>> ../err
-
-
-	echo "	  Collecting Shell Configuration..."
-	(cat /etc/*.bashrc) > "bashrc-config.txt" 2>> ../err
-	(cat /etc/profile /etc/profile.d/* ) > "profile_config.txt" 2>> ../err
-	(cat /home/*/.bash_profile /home/*/.bash_login /home/*/.profile /root/.bash_profile /root/.bash_login /root/.profile) > "found_first_to_executed.txt" 2>> ../err
-	echo "	  Collecting loginscript..."
-	(ls -la /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) > "home_loginscript.txt" 2>> ../err
-	(cat /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) >> "home_loginscript.txt" 2>> ../err
-	echo "	  Collecting logoutscript..."
-	(ls -la /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) > "home_logoutscript.txt" 2>> ../err
-	(cat /home/*/.bash_logout /home/*/.zlogout /root/.bash_logout /root/.zlogout) >> "home_logoutscript.txt" 2>> ../err
-
-
-
-
 
 	echo "	  Collecting timers list..."
    	systemctl list-timers --all > "list_timers.txt" 2>> ../err
