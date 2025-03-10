@@ -129,6 +129,8 @@ GET_SYSTEM_INFO(){
 	done
 	echo "	  Collecting modules info..."
 	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do echo -e "\nModule: $i"; modinfo $i ; done > modules_info.txt 2>> ../err
+	echo "	  Collecting system library type info..."
+	find /lib /usr/lib -type f -name '*.so*' -exec file {} \; > system_library_type.txt 2>> ../err
 	echo "	  Collecting hash loaded modules..."
 	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do modinfo $i | grep "filename:" | awk '{print $2}' | xargs -I{} sha1sum {} ; done > modules_sha1.txt 2>> ../err
 	find /lib/modules/$(uname -r)/kernel -name '*.ko*' | while read -r module; do
@@ -295,7 +297,10 @@ GET_SERVICES(){
 	echo "	  Collecting detail of all services..."
 	for file in /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service /lib/systemd/system/*; do
 	    [ -f "$file" ] && echo -e "\n========== $file ==========\n" && cat "$file"
-	done > "systemd.txt" 2>> ../err
+	done > "systemd_service.txt" 2>> ../err
+	for file in /etc/{init.d/*}; do
+	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
+	done > "init_service.txt" 2>> ../err
 	echo "	  Collecting status ALL services..."
 	service --status-all > "service_status_all.txt" 2>> ../err
 	
@@ -426,16 +431,16 @@ GET_TASKS(){
 	done >> "all_cron.txt" 2>> ../err
 	echo "	  Collecting crontab per user..."
 	for user in $(grep -v "/nologin\|/sync\|/false" /etc/passwd | cut -f1 -d: ); do echo $user; crontab -u $user -l | grep -v "^#"; done > "cron_per_user.txt" 2>> ../err
-
+	echo "	  Collecting at job..."
+	for j in $(atq | cut -f 1); do at -c "$j"; done > "at_job.txt" 2>> ../err
 	echo "	  Collecting user boot..."
 	for file in /{root,home/*}/.{bashrc,bash_profile,bash_login,bash_logout,profile,zshrc,zprofile,zlogout,shrc,cshrc,tcshrc,kshrc,mkshrc}; do
 	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
 	done > "shell_config_user_boot.txt" 2>> ../err
 	echo "	  Collecting system boot..."
-	for file in /etc/{profile,bash.bashrc,zsh/zshrc,zsh/zprofile,zsh/zlogin,zsh/zlogout,profile.d/*,rc.local*,init.d/*}; do
+	for file in /etc/{profile,bash.bashrc,zsh/zshrc,zsh/zprofile,zsh/zlogin,zsh/zlogout,profile.d/*,rc.local*,init.d/*,rc*.d/*}; do
 	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
 	done > "shell_config_system_boot.txt" 2>> ../err
-
 	echo "	  Collecting timers list..."
    	systemctl list-timers --all > "list_timers.txt" 2>> ../err
 	echo "	  Collecting XDG Autostart..."
@@ -550,7 +555,7 @@ GET_HISTORIES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Histories... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
-	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep "_history" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
+	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E "_history$" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
