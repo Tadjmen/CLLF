@@ -261,7 +261,7 @@ GET_PROCESS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing process ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir PROCESS && cd PROCESS
 	echo "	  Collecting pstree, Information of running process  ..."
-	for cmd in "pstree" "ps faux" "top -H -b -n 1"; do
+	for cmd in "pstree" "ps faux"; do
 	    echo -e "\n===== $cmd =====" >> display_process.txt
 	    $cmd >> display_process.txt 2>> ../err
 	done
@@ -298,7 +298,7 @@ GET_SERVICES(){
 	for file in /etc/systemd/system/**/*.service /usr/lib/systemd/**/*.service /lib/systemd/system/*; do
 	    [ -f "$file" ] && echo -e "\n========== $file ==========\n" && cat "$file"
 	done > "systemd_service.txt" 2>> ../err
-	for file in /etc/{init.d/*}; do
+	for file in /etc/init.d/*; do
 	    [ -f "$file" ] && echo "========== $file ==========" && cat "$file"
 	done > "init_service.txt" 2>> ../err
 	echo "	  Collecting status ALL services..."
@@ -326,7 +326,7 @@ GET_OPENED_PORTS(){
 	mkdir PORTS && cd PORTS
 	echo "	  Collecting OPENED PORTS..."
 	ss --all > "ss_all.txt" 2>> ../err
-	ss -lntu > "ss_lntu.txt" 2>> ../err
+	ss -plntu > "ss_plntu.txt" 2>> ../err
 	netstat -a > "netstat_a.txt" 2>> ../err
 	netstat -plntu > "netstat_with_pid.txt" 2>> ../err
 	
@@ -581,7 +581,10 @@ GET_SUSPICIOUS(){
 	echo "	  File greater than 10 MegaBytes..."
 	echo "Permission,uOwner,gOwner,Size,File Path,Create Time,Access Time,Modify Time" > greater_than_10_mb.csv 2>> ../err
 	awk -F',' '$1 !~ /^d/ && $4 > 10000000' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err >> greater_than_10_mb.csv 2>> ../err
-
+	for file in $(cut -d':' -f7 /etc/passwd | sort | uniq); do
+	    file $file >> all_shell_user.txt 2>> ../err
+		echo -e "\n" >> all_shell_user.txt 2>> ../err
+	done
 	echo "	  Collecting .ssh folder..."
 	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh_folders.tar.gz > ssh_folders_list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
