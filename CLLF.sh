@@ -260,11 +260,12 @@ GET_PROCESS(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing process ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir PROCESS && cd PROCESS
-	echo "	  Collecting pstree, Information of running process  ..."
-	for cmd in "pstree" "ps faux"; do
-	    echo -e "\n===== $cmd =====" >> display_process.txt
-	    $cmd >> display_process.txt 2>> ../err
-	done
+	echo "	  Collecting pstree  ..."
+	pstree 2>/dev/null > pstree.txt 2>> ../err
+	echo "	  Collecting process running  ..."
+	ps aux 2>/dev/null > ps_aux.txt 2>> ../err
+	echo "	  Collecting process running  ..."
+	ps faux 2>/dev/null > ps_faux.txt 2>> ../err
 	echo "	  Collecting the process hashes..."
 	find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > running_processhashes.txt 2>> ../err
 	echo "	  Collecting the process symbolic links..."

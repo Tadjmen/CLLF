@@ -70,11 +70,21 @@ PROCESS_SUSPICIUS(){
 	mkdir PROCESS_SUSPICIUS && cd PROCESS_SUSPICIUS
  	echo "	  Collecting root process high PID..."
 	ps -xau | awk '$1=="root" && $2 > 1000' > "root_process_high_pid.txt" 2>> ../err
+ 	echo "	  Collecting possible fake kthreadd kernel process..."
+	ps -xau | awk '$11 ~ /^\[.*\]$/ {print $2, $11}' | while read pid comm; do 
+	    [ "$(ps -o ppid= -p $pid)" -ne 2 ] && echo "[!] PID: $pid - $comm possible fake kthreadd kernel process"; 
+	done > "possible_fake_kthreadd_kernel_process.txt" 2>> ../err
+ 	echo "	  Collecting suspicious executable file descriptors..."
+	for pid in $(ls /proc | grep '^[0-9]\+$'); do
+	    ls -l /proc/$pid/fd 2>/dev/null | grep -E '\.(txt|log|jpg|png|gif|pdf|doc|xls|ppt)$'
+	done > "suspicious_executable_file_descriptors.txt" 2>> ../err
+	echo "	  Collecting for hidden stealth processes..."
+	ls -A /proc | grep -E '^[0-9]+$' | while read pid; do [[ ! -d /proc/$pid ]] && echo "PID $pid"; done > "hidden_processes.txt" 2>> ../err
 	echo "	  Collecting deleted process but still running ..."
 	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "process_deleted_but_running.txt" 2>> ../err
 	echo "	  Collecting suspicius process location excuteable file ..."
 	ls -alR /proc/*/exe 2> /dev/null | grep -E "\/tmp\/|\/var\/tmp\/|\/home\/|\/temp|\/dev\/shm|\/var\/run|\/run|\/var\/spool" > "process_running_with_suspicious_exe.txt" 2>> ../err
-	echo "	  Collecting suspicius process running with  CWD ..."
+	echo "	  Collecting suspicius process running with CWD ..."
 	ls -al /proc/*/cwd 2> /dev/null | grep "\->" | grep -E "\/tmp\/|\/var\/tmp\/|\/home\/|\/temp|\/dev\/shm|\/var\/run|\/run|\/var\/spool" > "process_running_with_suspicious_cwd.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: PROCESS_SUSPICIUS are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..
@@ -188,11 +198,20 @@ VIEW_PROCESS_SUSPICIUS(){
 	echo -e "	  ${YELLOW}Viewing.. root process high PID...${NORMAL}"
 	cat "root_process_high_pid.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
+	echo -e "	  ${YELLOW}Viewing.. possible fake kthreadd kernel process...${NORMAL}"
+	cat "possible_fake_kthreadd_kernel_process.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
+	echo -e "	  ${YELLOW}Viewing.. executable file descriptors ...${NORMAL}"
+	cat "suspicious_executable_file_descriptors.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
+	echo -e 	  ${YELLOW}Viewing.. hidden stealth processes...${NORMAL}"
+	cat "hidden_processes.txt" | more 2>&1
+	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. deleted still running ...${NORMAL}"
 	cat "process_deleted_but_running.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
-	echo -e "	  ${YELLOW}Viewing.. Real Process running path ...${NORMAL}"
-	cat "real_process_running_path.txt" | more 2>&1
+	echo -e "	  ${YELLOW}Viewing.. Process running with suspicious exe ...${NORMAL}"
+	cat "process_running_with_suspicious_exe.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. Process running with suspicious CWD ...${NORMAL}"
 	cat "process_running_with_suspicious_cwd.txt" | more 2>&1
