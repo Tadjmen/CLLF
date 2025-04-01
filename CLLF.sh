@@ -468,7 +468,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo "	  Collecting hidden File and DIR /..."
  	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.csv 2>> ../err
 	echo "	  Collecting hidden File and DIR in HOME folder ..."
-	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '^/home/|^/root/' > hidden_file_folder_in_home.csv 2>> ../err
+	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/all_hidden_file_folder.csv" | grep -E '^/home/|^/root/' > hidden_file_folder_in_home.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
 	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden_file_folder_in_home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden_file_folder_in_home.tar.gz > /dev/null 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
