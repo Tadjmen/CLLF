@@ -466,7 +466,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden File and DIR /..."
- 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '/\.[^/]*' > all_hidden_file_folder.csv 2>> ../err
+ 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.csv 2>> ../err
 	echo "	  Collecting hidden File and DIR in HOME folder ..."
 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '^/home/|^/root/' > hidden_file_folder_in_home.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
