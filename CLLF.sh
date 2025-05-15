@@ -333,7 +333,10 @@ GET_OPENED_PORTS(){
 	
 	if which lsof &>/dev/null; then
 		echo "	  Collecting List open files..."
-  		lsof > "list_open_files.txt" 2>> ../err
+		for user in "nobody" "games" "ftp" "www-data" "nginx" "http" "httpd" "apache" "mysql"; do
+			echo -e "\n========== $user ==========" >> list_open_files_suspicius_user.txt
+			lsof -u $user >> list_open_files_suspicius_user.txt 2>/dev/null
+		done
 		lsof -i -n -P > "list_open_files_contain_ipv4.txt" 2>> ../err
 	fi
 	
@@ -470,7 +473,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo "	  Collecting hidden File and DIR in HOME folder ..."
 	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/all_hidden_file_folder.csv" | grep -E '^/home/|^/root/' > hidden_file_folder_in_home.csv 2>> ../err
 	echo "	  Get hidden File and DIR in HOME folder ..."
-	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden_file_folder_in_home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden_file_folder_in_home.tar.gz > /dev/null 2>&1
+	#cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden_file_folder_in_home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden_file_folder_in_home.tar.gz > /dev/null 2>&1
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
