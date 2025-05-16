@@ -333,7 +333,7 @@ GET_OPENED_PORTS(){
 	
 	if which lsof &>/dev/null; then
 		echo "	  Collecting List open files..."
-		for user in "nobody" "games" "ftp" "www-data" "nginx" "http" "httpd" "apache" "mysql"; do
+		for user in "nobody" "games" "ftp" "www-data" "nginx" "root" "httpd" "apache" "mysql"; do
 			echo -e "\n========== $user ==========" >> list_open_files_suspicius_user.txt
 			lsof -u $user >> list_open_files_suspicius_user.txt 2>/dev/null
 		done
