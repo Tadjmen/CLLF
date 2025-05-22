@@ -629,7 +629,7 @@ SEND_NOTE(){
 	echo -e "${GREEN}[CLLF] - Scanning completed at $(date)${NORMAL}" 
 	echo -e "\n\n"
 	echo -e "+---------------------------------------------------------------------------+"
-	echo -e "|	  2024 - ____ _____ ________ | Threat Hunting and Incident Response	|"
+	echo -e "|     2025 - ____ _____ ________ | Threat Hunting and Incident Response     |"
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "\n\n"
 }
