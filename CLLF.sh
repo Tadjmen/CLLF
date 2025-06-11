@@ -326,7 +326,7 @@ GET_OPENED_PORTS(){
 	mkdir PORTS && cd PORTS
 	echo "	  Collecting OPENED PORTS..."
 	ss --all > "ss_all.txt" 2>> ../err
-	ss -plntu > "ss_plntu.txt" 2>> ../err
+	ss -plntu > "ss_with_pid.txt" 2>> ../err
 	netstat -a > "netstat_a.txt" 2>> ../err
 	netstat -plntu > "netstat_with_pid.txt" 2>> ../err
 	
