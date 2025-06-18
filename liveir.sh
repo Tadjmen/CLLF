@@ -78,8 +78,38 @@ PROCESS_SUSPICIUS(){
 	for pid in $(ls /proc | grep '^[0-9]\+$'); do
 	    ls -l /proc/$pid/fd 2>/dev/null | grep -E '\.(txt|log|jpg|png|gif|pdf|doc|xls|ppt)$'
 	done > "suspicious_executable_file_descriptors.txt" 2>> ../err
-	echo "	  Collecting for hidden stealth processes..."
-	ls -A /proc | grep -E '^[0-9]+$' | while read pid; do [[ ! -d /proc/$pid ]] && echo "PID $pid"; done > "hidden_processes.txt" 2>> ../err
+
+	echo "	  Collecting for hidden processes..."
+	declare -A visible
+	orig_dir=$(pwd)
+	cd /proc || exit
+	start=$(date +%s)
+	for pid in *; do
+		visible[$pid]=1
+	done
+	for i in $(seq 2 "$(cat /proc/sys/kernel/pid_max)"); do
+		[[ ${visible[$i]} = 1 ]] && continue
+		[[ ! -e /proc/$i/status ]] && continue
+		[[ $(stat -c %Z /proc/$i) -ge $start ]] && continue
+		[[ $(awk '/Tgid/{ print $2 }' "/proc/${i}/status") != "${i}" ]] && continue #  pid is a kernel thread
+		exe=$(readlink "/proc/$i/exe")
+		cmdline=$(tr '\000' ' ' <"/proc/$i/cmdline")
+		echo "- hidden $(cat /proc/$i/comm)[${i}] is running ${exe}: ${cmdline}" > "hidden_processes.txt" 2>> ../err
+	done
+	cd "$orig_dir"
+
+	echo "	  Collecting for hidden parent processes..."
+	for pid in /proc/[0-9]*; do
+	[[ ! -f "$pid/exe" || "$pid" == "/proc/self" ]] && continue
+	status_file="$pid/status"
+	[[ ! -f "$status_file" ]] && continue
+	parent=$(awk '/^PPid:/{ print $2 }' "$status_file")
+	[[ "$parent" == 0 ]] && continue
+	if [[ ! -e "/proc/${parent}/comm" ]]; then
+		echo "${pid##*/} has a hidden parent pid: ${parent}" > "hidden_parent_processes.txt" 2>> ../err
+	fi
+	done
+
 	echo "	  Collecting deleted process but still running ..."
 	ls -alR /proc/*/exe 2> /dev/null | grep deleted > "process_deleted_but_running.txt" 2>> ../err
 	echo "	  Collecting suspicius process location excuteable file ..."

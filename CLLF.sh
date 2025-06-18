@@ -468,11 +468,9 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden File and DIR /..."
- 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.csv 2>> ../err
-	echo "	  Collecting hidden File and DIR in HOME folder ..."
-	cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/all_hidden_file_folder.csv" | grep -E '^/home/|^/root/' > hidden_file_folder_in_home.csv 2>> ../err
-	echo "	  Get hidden File and DIR in HOME folder ..."
-	#cut -d',' -f5 "$OUTDIR/HIDDEN_FILE_FOLDER/hidden_file_folder_in_home.csv" | xargs -d '\n' timeout 1800s tar -czvf hidden_file_folder_in_home.tar.gz > /dev/null 2>&1
+ 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.txt 2>> ../err
+	echo "	  Collecting hidden File and DIR in suspicius folder ..."
+	cat "all_hidden_file_folder.txt" | grep -E '^/var/|^/tmp/|^/etc/|^/usr/|^/lib/|^/lib64/|^/boot/|^/dev/shm/|^/dev/mqueue/|^/Library' | grep -vE '.*.hmac|.bash_profile|.build-id|.com.google.Chrome.*|.config|.git|.dwz|.github|.gitignore|.resolv.conf.systemd-resolved.bak|.ssh-host-keys-migration|.AppleCustomMac|.AppleDiagnosticsSetupDone|.AppleSetupDone|.CFUserTextEncoding|.DS_Store|.GKRearmTimer|.GlobalPreferences.plist|.ICE-unix|.LastGKReject|.MASManifest|.PKInstallSandboxManager|.RunLanguageChooserToo|.SystemPolicy-default|.Test-unix|.X11-unix|.XIM-unix|.cleanup.user|.configureLocalKDC|.file|.font-unix|.keystone_install_lock|.keystone_system_install_lock|.localized|.metadata_never_index|.placeholder|.profile|.pwd.lock|.sim_diagnosticd_socket|.staging|.updated|/Library/Keychains/|.azure-pipelines|/var/lib/docker/overlay|/usr/src/linux-headers-|.bash_logout|.bashrc|/var/opt/kaspersky/klnagent/' | xargs -I {} ls -la {} > suspicius_hidden_file_folder.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
