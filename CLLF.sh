@@ -13,10 +13,36 @@ source CLLF.config
 #@> COLORS
 BK="\e[7m"
 NORMAL="\e[0m"
-RED="\e[31m"
-YELLOW="\e[93m"
-GREEN="\e[32m"
+# RED="\e[31m"
+# YELLOW="\e[93m"
+# GREEN="\e[32m"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m'
 
+print_info() {
+    echo -e "${CYAN} $1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW} $1${NC}"
+}
+
+print_error() {
+    echo -e "${RED} $1${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN} $1${NC}"
+}
+
+print_normal() {
+    echo -e "$1$"
+}
 
 #@> Check root privileges
 if [ "$(id -u)" -ne 0 ]; then
@@ -631,7 +657,42 @@ SEND_NOTE(){
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "\n\n"
 }
-
+declare -a gfunction_list=(
+	GET_SYSTEM_INFO
+	GET_PACKAGES
+	GET_ACCOUNT
+	GET_PROCESS
+	GET_SERVICES
+	GET_OPENED_PORTS
+	GET_NETWORK_INFO
+	GET_TASKS
+	GET_WEBSERVERSCRIPTS
+	GET_HISTORIES
+	GET_SUSPICIOUS
+	GET_SYS_LOGS
+)
+CREATE_FUNC_LIST(){
+	local function_name="$1"
+	local -n function_list="$2"
+	if ! type "$function_name" &>/dev/null; then
+		print_error "Function $function_name does not exist."
+		return 1
+	fi
+	function_list+=("$function_name")
+}
+RUN_FUNCTION_LIST(){
+	local -n function_list="$1"
+	total_functions=${#function_list[@]}
+	idx=1
+	for func in "${function_list[@]}"; do
+		local display_name="${func#GET_}"
+        display_name="${display_name//_/ }"
+		print_info "Running module [$idx/$total_functions]: $display_name"
+		$func
+		sleep 5
+		idx=$((idx + 1))
+	done
+}
 RUN(){
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
 	if $get_logs; then
@@ -655,31 +716,35 @@ RUN(){
 		fi
 	fi
 
-	GET_SYSTEM_INFO; sleep 5
+	# GET_SYSTEM_INFO; sleep 5
 	if $get_logs_confirm; then
-		GET_FULL_LOGS
+		# GET_FULL_LOGS
+		CREATE_FUNC_LIST "GET_FULL_LOGS" gfunction_list
 	fi
 	if $get_config; then
-		GET_ETC; sleep 5
+		# GET_ETC; sleep 5
+		CREATE_FUNC_LIST "GET_ETC" gfunction_list
 	fi
 	if $get_hidden_file_folder; then
-		GET_HIDDEN_FILE_FOLDER; sleep 5
+		# GET_HIDDEN_FILE_FOLDER; sleep 5
+		CREATE_FUNC_LIST "GET_HIDDEN_FILE_FOLDER" gfunction_list
 	fi
 	if $get_disk; then
-		GET_DISK; sleep 5
+		# GET_DISK; sleep 5
+		CREATE_FUNC_LIST "GET_DISK" gfunction_list
 	fi
-	GET_PACKAGES; sleep 5
-	GET_ACCOUNT; sleep 5
-	GET_PROCESS; sleep 5
-	GET_SERVICES; sleep 5
-	GET_OPENED_PORTS; sleep 5
-	GET_NETWORK_INFO; sleep 5
-	GET_TASKS; sleep 5
-	GET_WEBSERVERSCRIPTS; sleep 5
-	GET_HISTORIES; sleep 5
-	GET_SUSPICIOUS; sleep 5
-	GET_SYS_LOGS; sleep 5
-
+	# GET_PACKAGES; sleep 5
+	# GET_ACCOUNT; sleep 5
+	# GET_PROCESS; sleep 5
+	# GET_SERVICES; sleep 5
+	# GET_OPENED_PORTS; sleep 5
+	# GET_NETWORK_INFO; sleep 5
+	# GET_TASKS; sleep 5
+	# GET_WEBSERVERSCRIPTS; sleep 5
+	# GET_HISTORIES; sleep 5
+	# GET_SUSPICIOUS; sleep 5
+	# GET_SYS_LOGS; sleep 5
+	RUN_FUNCTION_LIST gfunction_list
 	export OUTDIR #export OUTDIR, can use in liveir
 	if $run_liveir; then
 		/bin/bash "$BASEDIR/liveir.sh"; sleep 5
