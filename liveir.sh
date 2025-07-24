@@ -140,7 +140,7 @@ FILES_SUSPICIUS(){
 	find /tmp -type f -exec file -p '{}' \; | grep ELF > "elf_file_in_tmp.txt" 2>> ../err
 	echo "	  Collecting list File hide in TMP..."
 	find /tmp -iname ".*" -print0 | xargs -0 tar -czvf file_hidden_tmp.tar.gz > "file_hidden_tmp.txt" 2>> ../err
-	echo "	  Collecting list File hide in TMP (hash)..."
+	echo "	  Collecting hash list File hide in TMP..."
  	find /tmp -type f -perm /+x -exec sha256sum {} + > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting SUSPICIOUS File ..."
 	find /tmp -type f -perm /+x -print0 | xargs -0 tar -czvf file_excuteable_tmp.tar.gz > "file_excuteable_tmp.txt" 2>> ../err
@@ -272,7 +272,7 @@ VIEW_FILES_SUSPICIUS(){
 	echo -e "	  ${YELLOW}Viewing.. list File hide in TMP...${NORMAL}"
 	cat "file_hidden_tmp.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
-	echo -e "	  ${YELLOW}Viewing.. list File hide in TMP (hash)...${NORMAL}"
+	echo -e "	  ${YELLOW}Viewing.. hash list File hide in TMP...${NORMAL}"
  	cat "tmp_file_hash_results.txt" | more 2>&1
  	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. SUSPICIOUS File ...${NORMAL}"
