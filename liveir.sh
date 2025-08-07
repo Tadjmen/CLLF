@@ -234,7 +234,7 @@ VIEW_PROCESS_SUSPICIUS(){
 	echo -e "	  ${YELLOW}Viewing.. executable file descriptors ...${NORMAL}"
 	cat "suspicious_executable_file_descriptors.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
-	echo -e 	  ${YELLOW}Viewing.. hidden stealth processes...${NORMAL}"
+	echo -e "	  ${YELLOW}Viewing.. hidden stealth processes...${NORMAL}"
 	cat "hidden_processes.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. deleted still running ...${NORMAL}"
