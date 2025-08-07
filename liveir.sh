@@ -30,8 +30,8 @@ ${NORMAL}"
 }
 
 
-OUTDIR=Logs_LIVEHUNT_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
-mkdir $OUTDIR && cd $OUTDIR
+OUTDIR_liveir=Logs_LIVEHUNT_$(hostname -I | awk '{print $1}')_$(hostname)_$(date +%F_%H-%M-%S)
+mkdir $OUTDIR_liveir && cd $OUTDIR_liveir
 touch err
 
 #Network - Suspicious network activity.
@@ -149,7 +149,7 @@ FILES_SUSPICIUS(){
 	echo "	  Collecting file ELF in Log..."
 	grep [[:cntrl:]] /var/log/*.log > "elf_in_log.txt" 2>> ../err
 	echo "	  Collecting suspicius history..."
-	cat "$OUTDIR/SYSTEM_INFO/metadata-accesstimes.csv" || grep "_history" | cut -d',' -f5 | grep -vE "\/home\/.*\/|\/root\/" 2>> ../err > "suspicius_history.txt" 2>> ../err
+	cat "$OUTDIR/SYSTEM_INFO/metadata-accesstimes.csv" | grep "_history" | cut -d',' -f5 | grep -vE "\/home\/.*\/|\/root\/" 2>> ../err > "suspicius_history.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: web server scripts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
