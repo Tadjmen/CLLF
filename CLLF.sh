@@ -453,7 +453,7 @@ GET_TASKS(){
 	echo "	  Collecting APT config ..."
 	cat /etc/apt/apt.conf.d/* > "apt.txt" 2>> ../err
 	echo "	  Collecting udev Rules contain RUN..."
-	cat /etc/udev/rules.d/* | grep "RUN" > "udev_rules_run.txt" 2>> ../err
+	cat /etc/udev/rules.d/* 2>/dev/null | grep "RUN" > "udev_rules_run.txt" 2>> ../err
 
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: tasks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
