@@ -234,7 +234,7 @@ VIEW_PROCESS_SUSPICIUS(){
 	echo -e "	  ${YELLOW}Viewing.. executable file descriptors ...${NORMAL}"
 	cat "suspicious_executable_file_descriptors.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
-	echo -e 	  ${YELLOW}Viewing.. hidden stealth processes...${NORMAL}"
+	echo -e "	  ${YELLOW}Viewing.. hidden stealth processes...${NORMAL}"
 	cat "hidden_processes.txt" | more 2>&1
 	read -rsp $'Press ENTER to continue... \n'
 	echo -e "	  ${YELLOW}Viewing.. deleted still running ...${NORMAL}"
@@ -337,10 +337,10 @@ VIEW_PERSISTENT_SUSPICIOUS(){
 SEND_NOTE(){
 	echo -e ""
 	echo -e "${BK} COMPLETED ${NORMAL}"
-	echo -e "${GREEN}[CLLF] - Scanning completed at $(date)${NORMAL}" 
+	echo -e "${GREEN}[CLLF] - Scanning completed at $(date) ${NORMAL}" 
 	echo -e "\n\n"
 	echo -e "+---------------------------------------------------------------------------+"
-	echo -e "|    2024 - ____ _____ ________ | Threat Hunting and Incident Response      |"
+	echo -e "|    2025 - ____ _____ ________ | Threat Hunting and Incident Response      |"
 	echo -e "+---------------------------------------------------------------------------+"
 	echo -e "\n\n"
 }
