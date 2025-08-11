@@ -468,7 +468,7 @@ GET_HIDDEN_FILE_FOLDER(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
 	echo "	  Collecting hidden File and DIR /..."
- 	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.txt 2>> ../err
+ 	cut -d',' -f6 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.txt 2>> ../err
 	echo "	  Collecting hidden File and DIR in suspicius folder ..."
 	cat "all_hidden_file_folder.txt" | grep -E '^/var/|^/tmp/|^/etc/|^/usr/|^/lib/|^/lib64/|^/boot/|^/dev/shm/|^/dev/mqueue/|^/Library' | grep -vE '.*.hmac|.bash_profile|.build-id|.com.google.Chrome.*|.config|.git|.dwz|.github|.gitignore|.resolv.conf.systemd-resolved.bak|.ssh-host-keys-migration|.AppleCustomMac|.AppleDiagnosticsSetupDone|.AppleSetupDone|.CFUserTextEncoding|.DS_Store|.GKRearmTimer|.GlobalPreferences.plist|.ICE-unix|.LastGKReject|.MASManifest|.PKInstallSandboxManager|.RunLanguageChooserToo|.SystemPolicy-default|.Test-unix|.X11-unix|.XIM-unix|.cleanup.user|.configureLocalKDC|.file|.font-unix|.keystone_install_lock|.keystone_system_install_lock|.localized|.metadata_never_index|.placeholder|.profile|.pwd.lock|.sim_diagnosticd_socket|.staging|.updated|/Library/Keychains/|.azure-pipelines|/var/lib/docker/overlay|/usr/src/linux-headers-|.bash_logout|.bashrc|/var/opt/kaspersky/klnagent/' | xargs -I {} ls -la {} > suspicius_hidden_file_folder.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -556,7 +556,7 @@ GET_HISTORIES(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing Histories... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir HISTORIES && cd HISTORIES
 	echo "	  Collecting HISTORIES ..."
-	cut -d',' -f5 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E "_history$" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
+	cut -d',' -f6 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E "_history$" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf histories.tar.gz > histories.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Histories are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
@@ -570,15 +570,15 @@ GET_SUSPICIOUS(){
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing suspicious files... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SUSPICIOUS && cd SUSPICIOUS
 	echo "	  Collecting file excute in /tmp..."
-	awk -F',' '$1 ~ /^-.*x/ && $5 ~ /^\/tmp\// {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_excuteable_tmp.tar.gz > "file_excuteable_tmp.txt" 2>> ../err
+	awk -F',' '$1 ~ /^-.*x/ && $6 ~ /^\/tmp\// {print $6}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_excuteable_tmp.tar.gz > "file_excuteable_tmp.txt" 2>> ../err
 	echo "	  Collecting file hidden in /tmp..."
-	awk -F',' '$5 ~ /^\/tmp\/\..*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_hidden_tmp.tar.gz > "file_hidden_tmp.txt" 2>> ../err
+	awk -F',' '$6 ~ /^\/tmp\/\..*/ {print $6}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_hidden_tmp.tar.gz > "file_hidden_tmp.txt" 2>> ../err
 	echo "	  Collecting sha256 in /tmp..."
- 	awk -F',' '$5 ~ /^\/tmp/ && $1 ~ /^-.*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | xargs -I {} sha256sum {} > tmp_file_hash_results.txt 2>> ../err
+ 	awk -F',' '$6 ~ /^\/tmp/ && $1 ~ /^-.*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | xargs -I {} sha256sum {} > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting suid-sgid File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf suid_sgid.tar.gz > suid_sgid_list.txt 2>> ../err
 	echo "	  File small less than 1kb..."
-	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller_files_1kb.tar.gz > smaller_files_1kb.txt 2>> ../err
+	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $6}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller_files_1kb.tar.gz > smaller_files_1kb.txt 2>> ../err
 	echo "	  File greater than 10 MegaBytes..."
 	echo "Permission,uOwner,gOwner,Size,File Path,Create Time,Access Time,Modify Time" > greater_than_10_mb.csv 2>> ../err
 	awk -F',' '$1 !~ /^d/ && $4 > 10000000' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err >> greater_than_10_mb.csv 2>> ../err

@@ -148,8 +148,8 @@ FILES_SUSPICIUS(){
 	find /home/ /etc/ -type d -name .cache -prune -o -type f -mtime -1 -print  > "last_1_day_file_modify.txt" 2>> ../err
 	echo "	  Collecting file ELF in Log..."
 	grep [[:cntrl:]] /var/log/*.log > "elf_in_log.txt" 2>> ../err
-	echo "	  Collecting suspicius history..."
-	cat "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep "_history" | cut -d',' -f5 | grep -vE "\/home\/.*\/|\/root\/" 2>> ../err > "suspicius_history.txt" 2>> ../err
+	echo "	  Collecting suspicius history location..."
+	cat "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep "_history" | cut -d',' -f6 | grep -vE "\/home\/.*\/|\/root\/" 2>> ../err > "suspicius_history_location.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: web server scripts are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd ..  
 }
