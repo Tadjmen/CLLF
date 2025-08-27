@@ -16,58 +16,8 @@ var userCache = make(map[uint32]string)
 var groupCache = make(map[uint32]string)
 var excludeDirs []string
 
-func main() {
-	execPath, _ := os.Executable()
-	baseDir := filepath.Dir(filepath.Dir(execPath))
-	configPath := filepath.Join(baseDir, "CLLF.config")
-
-	loadConfig(configPath)
-
-	w := bufio.NewWriter(os.Stdout)
-	defer w.Flush()
-
-	fmt.Fprintln(w, "Permission,uOwner,gOwner,Size,Parent Path,File Path,File Extension,Create Time,Access Time,Modify Time")
-
-	filepath.WalkDir("/", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return nil
-		}
-
-		for _, ex := range excludeDirs {
-			if strings.HasPrefix(path, ex) {
-				if d.IsDir() {
-					return fs.SkipDir
-				}
-				return nil
-			}
-		}
-
-		info, err := d.Info()
-		if err != nil {
-			return nil
-		}
-
-		stat := info.Sys().(*syscall.Stat_t)
-
-		fType := fileTypeRune(info.Mode())
-		perm := fmt.Sprintf("%s%#o", fType, stat.Mode&0777)
-
-		uOwner := getUser(stat.Uid)
-		gOwner := getGroup(stat.Gid)
-		size := info.Size()
-
-		dir := filepath.Dir(path) + "/"
-		ext := filepath.Ext(info.Name())
-
-		ctime := formatTime(stat.Ctim)
-		atime := formatTime(stat.Atim)
-		mtime := formatTime(stat.Mtim)
-
-		fmt.Fprintf(w, "%s,%s,%s,%d,%s,%s,%s,%s,%s,%s\n",
-			perm, uOwner, gOwner, size, dir, path, ext, ctime, atime, mtime)
-
-		return nil
-	})
+func escapeCSV(s string) string {
+    return strings.ReplaceAll(s, `"`, `""`)
 }
 
 func loadConfig(path string) {
@@ -146,4 +96,62 @@ func getGroup(gid uint32) string {
 
 func formatTime(ts syscall.Timespec) string {
 	return time.Unix(int64(ts.Sec), 0).Format("2006-01-02 15:04:05")
+}
+
+
+func main() {
+	execPath, _ := os.Executable()
+	baseDir := filepath.Dir(filepath.Dir(execPath))
+	configPath := filepath.Join(baseDir, "CLLF.config")
+
+	loadConfig(configPath)
+
+	w := bufio.NewWriter(os.Stdout)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "Permission,uOwner,gOwner,Size,Parent Path,File Path,File Extension,Create Time,Access Time,Modify Time")
+
+	filepath.WalkDir("/", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+
+		for _, ex := range excludeDirs {
+			if strings.HasPrefix(path, ex) {
+				if d.IsDir() {
+					return fs.SkipDir
+				}
+				return nil
+			}
+		}
+
+		info, err := d.Info()
+		if err != nil {
+			return nil
+		}
+
+		stat := info.Sys().(*syscall.Stat_t)
+
+		fType := fileTypeRune(info.Mode())
+		perm := fmt.Sprintf("%s%#o", fType, stat.Mode&0777)
+
+		uOwner := getUser(stat.Uid)
+		gOwner := getGroup(stat.Gid)
+		size := info.Size()
+
+		dir := filepath.Dir(path) + "/"
+		ext := filepath.Ext(info.Name())
+
+		ctime := formatTime(stat.Ctim)
+		atime := formatTime(stat.Atim)
+		mtime := formatTime(stat.Mtim)
+
+		// fmt.Fprintf(w, "%s,%s,%s,%d,%s,%s,%s,%s,%s,%s\n",
+		// 	perm, uOwner, gOwner, size, dir, path, ext, ctime, atime, mtime)
+			
+		fmt.Fprintf(w, "%s,%s,%s,%d,\"%s\",\"%s\",\"%s\",%s,%s,%s\n",
+			perm, uOwner, gOwner, size, escapeCSV(dir), escapeCSV(path), escapeCSV(ext), ctime, atime, mtime)
+
+		return nil
+	})
 }
