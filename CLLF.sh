@@ -461,22 +461,6 @@ GET_TASKS(){
 }
 
 
-#@> GET FULL hidden home files
-GET_HIDDEN_FILE_FOLDER(){
-	#
-	# @desc   :: This function saves HIDDEN FILE FOLDER
-	#
-	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing GET hidden home files and hidden Folder ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
-	mkdir HIDDEN_FILE_FOLDER && cd HIDDEN_FILE_FOLDER
-	echo "	  Collecting hidden File and DIR /..."
- 	cut -d',' -f6 "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | grep -E '\/\.[^/]*' > all_hidden_file_folder.txt 2>> ../err
-	echo "	  Collecting hidden File and DIR in suspicius folder ..."
-	cat "all_hidden_file_folder.txt" | grep -E '^/var/|^/tmp/|^/etc/|^/usr/|^/lib/|^/lib64/|^/boot/|^/dev/shm/|^/dev/mqueue/|^/Library' | grep -vE '.*.hmac|.bash_profile|.build-id|.com.google.Chrome.*|.config|.git|.dwz|.github|.gitignore|.resolv.conf.systemd-resolved.bak|.ssh-host-keys-migration|.AppleCustomMac|.AppleDiagnosticsSetupDone|.AppleSetupDone|.CFUserTextEncoding|.DS_Store|.GKRearmTimer|.GlobalPreferences.plist|.ICE-unix|.LastGKReject|.MASManifest|.PKInstallSandboxManager|.RunLanguageChooserToo|.SystemPolicy-default|.Test-unix|.X11-unix|.XIM-unix|.cleanup.user|.configureLocalKDC|.file|.font-unix|.keystone_install_lock|.keystone_system_install_lock|.localized|.metadata_never_index|.placeholder|.profile|.pwd.lock|.sim_diagnosticd_socket|.staging|.updated|/Library/Keychains/|.azure-pipelines|/var/lib/docker/overlay|/usr/src/linux-headers-|.bash_logout|.bashrc|/var/opt/kaspersky/klnagent/' | xargs -I {} ls -la {} > suspicius_hidden_file_folder.txt 2>> ../err
-	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: GET hidden home files and hidden Folder are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd "$OUTDIR"
-}
-
-
 #@> GET FULL Config
 GET_ETC(){
 	#
@@ -570,23 +554,10 @@ GET_SUSPICIOUS(){
 	#
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing suspicious files... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
 	mkdir SUSPICIOUS && cd SUSPICIOUS
-	echo "	  Collecting file excute in /tmp..."
-	awk -F',' '$1 ~ /^-.*x/ && $6 ~ /^\/tmp\// {print $6}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_excuteable_tmp.tar.gz > "file_excuteable_tmp.txt" 2>> ../err
-	echo "	  Collecting file hidden in /tmp..."
-	awk -F',' '$6 ~ /^\/tmp\/\..*/ {print $6}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | xargs -d '\n' timeout 1800s tar -czvf file_hidden_tmp.tar.gz > "file_hidden_tmp.txt" 2>> ../err
 	echo "	  Collecting sha256 in /tmp..."
  	awk -F',' '$6 ~ /^\/tmp/ && $1 ~ /^-.*/ {print $5}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" | xargs -I {} sha256sum {} > tmp_file_hash_results.txt 2>> ../err
 	echo "	  Collecting suid-sgid File ..."
 	find /bin /usr/bin /home /root /var -xdev -type f \( -perm -04000 -o -perm -02000 \) -print0 2>> ../err | xargs -0 tar -czvf suid_sgid.tar.gz > suid_sgid_list.txt 2>> ../err
-	echo "	  File small less than 1kb..."
-	awk -F',' '$1 !~ /^d/ && $4 < 1024 {print $6}' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err | grep "www\|apache2\|nginx\|httpd\|http\|html" | xargs -d '\n' timeout 1800s tar -czvf smaller_files_1kb.tar.gz > smaller_files_1kb.txt 2>> ../err
-	echo "	  File greater than 10 MegaBytes..."
-	echo "Permission,uOwner,gOwner,Size,File Path,Create Time,Access Time,Modify Time" > greater_than_10_mb.csv 2>> ../err
-	awk -F',' '$1 !~ /^d/ && $4 > 10000000' "$OUTDIR/SYSTEM_INFO/metadatatime_results.csv" 2>> ../err >> greater_than_10_mb.csv 2>> ../err
-	for file in $(cut -d':' -f7 /etc/passwd | sort | uniq); do
-	    file $file >> all_shell_user.txt 2>> ../err
-		echo -e "\n" >> all_shell_user.txt 2>> ../err
-	done
 	echo "	  Collecting .ssh folder..."
 	find /home /root /back* -xdev -type d -name .ssh -print0 2>> ../err | xargs -0 tar -czvf ssh_folders.tar.gz > ssh_folders_list.txt 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: suspicious files are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
@@ -635,55 +606,32 @@ SEND_NOTE(){
 
 RUN(){
 	duvarlog=$(du -sh /var/log/ 2>/dev/null)
-	if $get_logs; then
-		if [[ $auto == true ]]; then
-			echo -e "\n\n"
-			echo -e "+---------------------------------------------------------------------------+"
-			echo -e "|	  ${RED}AUTO MODE IS ON${NORMAL} - Size is ${GREEN}${duvarlog}${NORMAL} of Log will be Collect..."
-			echo -e "+---------------------------------------------------------------------------+"
-			echo -e "\n\n"
-		else
-			echo -e "\n${RED}Warning${NORMAL} - Size is ${GREEN}$duvarlog${NORMAL}, Do you want to continue, ${YELLOW}Y${NORMAL} to continue, ${GREEN}N${NORMAL} to Cancel.\n" ; sleep 1
-			read -p "Choice to continue Y/N:" -n 1 -r varchoice
-			echo
-			if [[ $varchoice =~ ^[Yy]$ ]]; then
-				get_logs_confirm=true
-			else
-				cd "$BASEDIR"
-				rm -rf "$OUTDIR"
-				exit 0;
-			fi
-		fi
-	fi
 
-	GET_SYSTEM_INFO; sleep 5
-	if $get_logs_confirm; then
+	GET_SYSTEM_INFO; sleep 2
+	if $get_logs; then
 		GET_FULL_LOGS
 	fi
 	if $get_config; then
-		GET_ETC; sleep 5
-	fi
-	if $get_hidden_file_folder; then
-		GET_HIDDEN_FILE_FOLDER; sleep 5
+		GET_ETC; sleep 2
 	fi
 	if $get_disk; then
-		GET_DISK; sleep 5
+		GET_DISK; sleep 2
 	fi
-	GET_PACKAGES; sleep 5
-	GET_ACCOUNT; sleep 5
-	GET_PROCESS; sleep 5
-	GET_SERVICES; sleep 5
-	GET_OPENED_PORTS; sleep 5
-	GET_NETWORK_INFO; sleep 5
-	GET_TASKS; sleep 5
-	GET_WEBSERVERSCRIPTS; sleep 5
-	GET_HISTORIES; sleep 5
-	GET_SUSPICIOUS; sleep 5
-	GET_SYS_LOGS; sleep 5
+	GET_PACKAGES; sleep 2
+	GET_ACCOUNT; sleep 2
+	GET_PROCESS; sleep 2
+	GET_SERVICES; sleep 2
+	GET_OPENED_PORTS; sleep 2
+	GET_NETWORK_INFO; sleep 2
+	GET_TASKS; sleep 2
+	GET_WEBSERVERSCRIPTS; sleep 2
+	GET_HISTORIES; sleep 2
+	GET_SUSPICIOUS; sleep 2
+	GET_SYS_LOGS; sleep 2
 
 	export OUTDIR #export OUTDIR, can use in liveir
 	if $run_liveir; then
-		/bin/bash "$BASEDIR/liveir.sh"; sleep 5
+		/bin/bash "$BASEDIR/liveir.sh"; sleep 2
 	fi
 }
 
