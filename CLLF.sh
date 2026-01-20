@@ -187,7 +187,7 @@ GET_DISK(){
 	echo "		Collecting mem status	..."
 	run_timeout "$med_to" free >> "free_mem.txt" 2>> ../err
 	echo "		Collecting fstab	..."
-	run_timeout "$med_to" scat /etc/fstab >> "startup_mount_fstab.txt" 2>> ../err
+	run_timeout "$med_to" cat /etc/fstab >> "startup_mount_fstab.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Disks are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
