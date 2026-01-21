@@ -460,19 +460,19 @@ GET_SYS_LOGS(){
 	run_timeout "$med_to" last -Faixw > "last.txt" 2>> ../err
 	run_timeout "$med_to" journalctl -x > "journalctl_x.txt" 2>> ../err
 	run_timeout "$med_to" journalctl -k > "journalctl_k.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/audit/** 2>> ../err | more > "auditd.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/boot** 2>> ../err | more > "boot.txt" 2>> ../err
-	run_timeout "$med_to" utmpdump /var/log/btmp** 2>> ../err | more > "invalid_login_attempts.txt" 2>> ../err
-	run_timeout "$med_to" utmpdump /var/log/wtmp** 2>> ../err | more > "login_logout_activity.txt" 2>> ../err
-	run_timeout "$med_to" utmpdump /var/log/utmp** 2>> ../err | more > "current_session_active.txt" 2>> ../err
-	run_timeout "$med_to" utmpdump /var/run/utmp 2>> ../err | more > "current_session_active.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/apt/** 2>> ../err | more > "apt.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/kern** 2>> ../err | more > "kern.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/mail** 2>> ../err | more > "mail.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/message** 2>> ../err | more > "message.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/secure** 2>> ../err | more > "secure.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/**auth** 2>> ../err | more > "auth.txt" 2>> ../err
-	run_timeout "$med_to" cat /var/log/syslog** 2>> ../err | more > "syslog.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/audit/** 2>> ../err > "auditd.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/boot** 2>> ../err > "boot.txt" 2>> ../err
+	run_timeout "$med_to" utmpdump /var/log/btmp** 2>> ../err > "invalid_login_attempts.txt" 2>> ../err
+	run_timeout "$med_to" utmpdump /var/log/wtmp** 2>> ../err > "login_logout_activity.txt" 2>> ../err
+	run_timeout "$med_to" utmpdump /var/log/utmp** 2>> ../err > "current_session_active.txt" 2>> ../err
+	run_timeout "$med_to" utmpdump /var/run/utmp 2>> ../err > "current_session_active.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/apt/** 2>> ../err > "apt.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/kern** 2>> ../err > "kern.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/mail** 2>> ../err > "mail.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/message** 2>> ../err > "message.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/secure** 2>> ../err > "secure.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/**auth** 2>> ../err > "auth.txt" 2>> ../err
+	run_timeout "$med_to" cat /var/log/syslog** 2>> ../err > "syslog.txt" 2>> ../err
 	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: logs are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
 	cd "$OUTDIR"
 }
