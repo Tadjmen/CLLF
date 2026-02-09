@@ -142,7 +142,7 @@ GET_SYSTEM_INFO(){
 	echo "		Collecting system library type info..."
 	run_timeout "$med_to" find /lib /usr/lib -type f -name '*.so*' -exec file {} \; > system_library_type.txt 2>> ../err
 	echo "		Collecting hash loaded modules..."
-	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do run_timeout "$med_to" modinfo $i | grep "filename:" | awk '{print $2}' | run_timeout "$med_to" xargs -I{} sha1sum {} ; done > modules_sha1.txt 2>> ../err
+	for i in `lsmod | awk '{print $1}' | sed '/Module/d'`; do run_timeout "$med_to" modinfo $i | grep "filename:" | awk '{print $2}' | run_timeout "$med_to" xargs -I{} sha256sum {} ; done > modules_sha1.txt 2>> ../err
 	run_timeout "$med_to" find /lib/modules/$(uname -r)/kernel -name '*.ko*' | while read -r module; do
 		if ! run_timeout "$med_to" modinfo "$module" | grep -q 'signature:'; then
 			echo "Unsigned kernel module: $module" >> unsigned_modules.txt 2>> ../err
@@ -256,31 +256,88 @@ GET_ACCOUNT(){
 
 #@> GET PROCESS
 GET_PROCESS(){
-	#
-	# @desc	 :: This function saves running process
-	#
-	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " Processing process ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
-	mkdir PROCESS && cd PROCESS
-	echo "		Collecting process running	..."
-	run_timeout "$low_to" ps aux 2>/dev/null > ps_aux.txt 2>> ../err
-	echo "		Collecting process running	..."
-	run_timeout "$low_to" ps faux 2>/dev/null > ps_faux.txt 2>> ../err
-	echo "		Collecting the process hashes..."
-	run_timeout "$med_to" find -L /proc/[0-9]*/exe -print0 2>/dev/null |xargs -0 sha1sum 2>/dev/null > running_processhashes.txt 2>> ../err
-	echo "		Collecting the process symbolic links..."
-	run_timeout "$med_to" find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > running_process_exe_links.txt 2>> ../err
-	 echo "		Collecting the process environment..."
-	run_timeout "$med_to" find /proc/[0-9]*/environ | xargs head 2>/dev/null > running_process_environ.txt 2>> ../err
-		echo "		Collecting the process CWD..."
-	run_timeout "$med_to" find /proc/[0-9]*/cwd | xargs ls -l 2>/dev/null > running_process_cwd.txt 2>> ../err
-	echo "		Collecting the process cmdline..."
-	run_timeout "$med_to" find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > running_process_cmdline.txt 2>> ../err
-	echo "		Collecting Run-time variable data..."
-	run_timeout "$med_to" ls -latr /var/run 2>/dev/null > TEMP_VAR_RUN.txt 2>> ../err
-	run_timeout "$med_to" ls -latr /run 2>/dev/null > TEMP-RUN.txt 2>> ../err
-	echo -e "${BK}		${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Process are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
-	cd "$OUTDIR"
+    #
+    # @desc  :: This function saves running process
+    #
+    echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " Processing process ... ${BK}${NORMAL} (${YELLOW}it may take time${NORMAL})"
+    mkdir PROCESS && cd PROCESS
+
+    echo "        Collecting process running  ..."
+    run_timeout "$low_to" ps aux 2>/dev/null > ps_aux.txt 2>> ../err
+
+    echo "        Collecting process running  ..."
+    run_timeout "$low_to" ps faux 2>/dev/null > ps_faux.txt 2>> ../err
+
+    echo "        Collecting the process hashes..."
+    run_timeout "$med_to" find -L /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 sha1sum 2>/dev/null > running_processhashes.txt 2>> ../err
+
+    echo "        Collecting the process symbolic links..."
+    run_timeout "$med_to" find /proc/[0-9]*/exe -print0 2>/dev/null | xargs -0 ls -lh 2>/dev/null > running_process_exe_links.txt 2>> ../err
+
+    echo "        Collecting the process environment..."
+    run_timeout "$med_to" find /proc/[0-9]*/environ | xargs head 2>/dev/null > running_process_environ.txt 2>> ../err
+
+    echo "        Collecting the process CWD..."
+    run_timeout "$med_to" find /proc/[0-9]*/cwd | xargs ls -l 2>/dev/null > running_process_cwd.txt 2>> ../err
+
+    echo "        Collecting the process cmdline..."
+    run_timeout "$med_to" find /proc/[0-9]*/cmdline | xargs head 2>/dev/null > running_process_cmdline.txt 2>> ../err
+
+    echo "        Collecting merged process snapshot (all_process_merged.csv)..."
+
+    # header
+    echo 'time,pid,user,exe,sha1,cwd,cmdline,env' > all_process_merged.csv
+
+    run_timeout "$med_to" bash -lc '
+        csv_escape() {
+            # escape " -> ""
+            # strip CR, turn LF/TAB into spaces, keep it one-line
+            local s="$1"
+            s=${s//$'"'"'\r'"'"'/}
+            s=${s//$'"'"'\n'"'"'/ }
+            s=${s//$'"'"'\t'"'"'/ }
+            s=${s//\"/\"\"}
+            printf "\"%s\"" "$s"
+        }
+
+        for p in /proc/[0-9]*; do
+			# get number PID
+            pid=${p##*/}
+
+            [[ -r /proc/$pid ]] || continue
+
+            user=$(stat -c %U /proc/$pid 2>/dev/null)
+            exe=$(readlink /proc/$pid/exe 2>/dev/null)
+            cwd=$(readlink /proc/$pid/cwd 2>/dev/null)
+
+            cmd=$(tr "\0" " " < /proc/'"$pid"'/cmdline 2>/dev/null)
+            env=$(tr "\0" " " < /proc/'"$pid"'/environ 2>/dev/null | head -c 500)
+
+            sha1=""
+			# check exist
+            if [[ -n "$exe" && -r "$exe" && "$exe" != *"(deleted)"* ]]; then
+                sha1=$(sha1sum "$exe" 2>/dev/null | awk "{print \$1}")
+            fi
+
+            ts=$(date -Is)
+
+            printf "%s,%s,%s,%s,%s,%s,%s,%s\n" \
+                "$ts" \
+                "$pid" \
+                "$(csv_escape "${user:-ULP}")" \
+                "$(csv_escape "${exe:-ULP}")" \
+                "${sha1:-}" \
+                "$(csv_escape "${cwd:-ULP}")" \
+                "$(csv_escape "${cmd:-ULP}")" \
+                "$(csv_escape "${env:-ULP}")" \
+            >> all_process_merged.csv
+        done
+    ' 2>> ../err
+
+    echo -e "${BK}        ${NORMAL}" | tr -d '\n' | echo -e " COLLECTED: Process are successfully saved. ${BK}${NORMAL} (${YELLOW}OK${NORMAL})"
+    cd "$OUTDIR"
 }
+
 
 
 #@> GET SERVICES
